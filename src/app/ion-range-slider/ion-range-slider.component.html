@@ -1,0 +1,97 @@
+<span class="irs irs--{{skin}} js-irs-0" [ngClass]="{
+  'irs-with-grid': grid
+}" ><!--(document:mousemove)="pointerMove($event)"-->
+
+  <span class="irs" #cache_rs>
+    <span  class="irs-line" tabindex="0"></span>
+    <span #cache_min class="irs-min" *ngIf="cache.min.isVisible">{{cache.min.html}}</span>
+    <span #cache_max class="irs-max" *ngIf="cache.max.isVisible">{{cache.max.html}}</span>
+    <span #cache_from class="irs-from" *ngIf="cache.from.isVisible" [ngStyle]="cache.from.style">{{cache.from.html}}</span>
+    <span #cache_to class="irs-to" *ngIf="cache.to.isVisible" [ngStyle]="cache.to.style">{{cache.to.html}}</span>
+    <span #cache_single class="irs-single"  *ngIf="cache.single.isVisible"
+          (mousedown)="pointerDown('single', $event)"
+          [ngStyle]="cache.single.style"
+    >{{cache.single.html}}</span>
+  </span>
+  <span class="irs-grid" *ngIf="grid"
+        [ngStyle]="cache.grid.style">
+    <span class="irs-grid-pol small"
+          *ngFor="let v of smallGridSnap"
+          [style]="{
+            left: v.left
+          }"
+          ></span>
+
+    <ng-container *ngFor="let v of bigGridSnap; let idx= index;">
+      <span class="irs-grid-pol"
+            [style]="{
+              left: v.left
+            }"
+            >
+
+      </span>
+
+      <span class="irs-grid-text "
+            [style]="{
+              left: v.left
+            }"
+            style="margin-left: -0.80078%;">{{v.label}}</span>
+    </ng-container>
+
+  </span>
+
+  <ng-container *ngIf="type === 'single'">
+    <span #cache_bar class="irs-bar irs-bar--single"
+          *ngIf="cache.bar.isVisible"
+          [ngStyle]="cache.bar.style"></span>
+    <span class="irs-shadow shadow-single"
+          *ngIf="cache.shad_single.isVisible"
+          [ngStyle]="cache.shad_single.style"
+    ></span>
+    <span #cache_s_single class="irs-handle single"
+          (mousedown)="pointerDown('single', $event)"
+          [ngStyle]="cache.s_single.style"
+    ><i></i><i></i><i></i></span>
+  </ng-container>
+
+
+  <ng-container *ngIf="type === 'double'">
+
+    <span #cache_bar  class="irs-bar"
+          [style]="{
+              left:  coords.p_bar_x+'%',
+              width: coords.p_bar_w+'%'
+          }"></span>
+        <span class="irs-shadow shadow-from"
+              *ngIf="cache.shad_from.isVisible"
+              [ngStyle]="cache.shad_from.style"></span>
+        <span class="irs-shadow shadow-to"
+              *ngIf="cache.shad_to.isVisible"
+              [ngStyle]="cache.shad_to.style"
+        ></span>
+        <span #cache_s_from class="irs-handle from" (mousedown)="pointerDown('from', $event)"
+              [ngStyle]="cache.s_from.style"
+        ><i></i><i></i><i></i></span>
+        <span #cache_s_to class="irs-handle to" (mousedown)="pointerDown('to', $event)"
+              [ngStyle]="cache.s_to.style"
+        ><i></i><i></i><i></i></span>
+  </ng-container>
+
+
+</span>
+
+
+<pre *ngIf="showDebugInfo">
+  from: {{from}} - to: {{to}}<br>
+  force_redraw: {{force_redraw}}<br>
+  old_from: {{old_from}} - result.from {{result.from}}<br>
+  old_to: {{old_to}} - result.to {{result.to}}<br>
+  is_key: {{is_key}}<br>
+
+<!--  {{cache.single | json}}<br>-->
+<!--  {{cache.s_single | json}}<br>-->
+  {{labels | json}}<br>
+  {{coords.x_pointer}}
+<!--  {{result | json}}<br>-->
+<!--  {{coords | json}}-->
+</pre>
