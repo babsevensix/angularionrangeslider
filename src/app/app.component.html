@@ -1,38 +1,18 @@
-<!--<div style="width:1000px;">-->
-<!--  <app-ion-range-slider [min]="0" [max]="50" [step]="1" [grid]="true" [grid_num]="5" [skin]="'flat'" ></app-ion-range-slider>-->
-<!--</div>-->
+<!-- <div style="width:1000px;background-color: aqua;">
+  <app-ion-range-slider [min]="0" [max]="5000" [step]="1" [grid]="true" [grid_num]="5" [skin]="'flat'" [type]="'double'"
+    [showDebugInfo]="true">
+  </app-ion-range-slider>
+</div> -->
 <div style="display: flex">
-<div style="width:50%; margin:5rem;">
-  <app-ion-range-slider [min]="0"
-                        [max]="50"
-                        [step]="5"
-                        [grid]="true"
-                        [grid_num]="5"
-                        [grid_snap]="false"
-                        [grid_margin]="true"
-                        [block]="true"
-                        [prefix]="'€'"
-                        [postfix]="'$'"
-                        [skin]="'modern'"
-                        [type]="'double'"
-                        [from]="25"
-                        [to]="45"></app-ion-range-slider>
-</div>
-<div style="width:50%; margin:5rem;">
-  <app-ion-range-slider [min]="0"
-                        [max]="50"
-                        [step]="5"
-                        [grid]="true"
-                        [grid_num]="5"
-                        [grid_snap]="false"
-                        [grid_margin]="true"
-                        [block]="true"
-                        [prefix]="'€'"
-                        [postfix]="'$'"
-                        [skin]="'flat'"
-                        [type]="'double'"
-                        [from]="25"
-                        [to]="45"></app-ion-range-slider>
-</div>
+  <div style="width:50%; margin:5rem;">
+    <app-ion-range-slider [min]="0" [max]="50" [step]="5" [grid]="true" [grid_num]="5" [grid_snap]="false"
+      [grid_margin]="true" [block]="false" [prefix]="'€'" [postfix]="'$'" [skin]="'modern'" [type]="'double'"
+      [from]="25" [to]="45" [showDebugInfo]="true"></app-ion-range-slider>
+  </div>
+  <div style="width:50%; margin:5rem;">
+    <app-ion-range-slider [min]="0" [max]="50" [step]="5" [grid]="true" [grid_num]="5" [grid_snap]="false"
+      [grid_margin]="true" [block]="false" [prefix]="'€'" [postfix]="'$'" [skin]="'flat'" [type]="'double'" [from]="25"
+      [to]="45" [showDebugInfo]="true"></app-ion-range-slider>
+  </div>
 
 </div>
