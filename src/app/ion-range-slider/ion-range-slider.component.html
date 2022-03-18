@@ -5,7 +5,9 @@
   <!--(document:mousemove)="pointerMove($event)"-->
 
   <span class="irs" #cache_rs>
-    <span class="irs-line" tabindex="0"></span>
+    <span #cache_line class="irs-line" tabindex="0" (mousedown)="pointerClick('click',$event)"
+            (focus)="pointerFocus($event)"
+            (keydown)="keyboard? keyDown( $event): undefined " ></span>
     <span #cache_min class="irs-min" *ngIf="cache.min.isVisible">{{cache.min.html}}</span>
     <span #cache_max class="irs-max" *ngIf="cache.max.isVisible">{{cache.max.html}}</span>
     <span #cache_from class="irs-from" *ngIf="cache.from.isVisible"
@@ -39,7 +41,7 @@
 
   <ng-container *ngIf="type === 'single'">
     <span #cache_bar class="irs-bar irs-bar--single" *ngIf="cache.bar.isVisible" [ngStyle]="cache.bar.style"></span>
-    <span class="irs-shadow shadow-single" *ngIf="cache.shad_single.isVisible"
+    <span class="irs-shadow shadow-single" *ngIf="cache.shad_single.isVisible" (mousedown)="pointerClick('click', $event)"
       [ngStyle]="cache.shad_single.style"></span>
     <span #cache_s_single class="irs-handle single" (mousedown)="pointerDown('single', $event)"
       [ngStyle]="cache.s_single.style"><i></i><i></i><i></i></span>
@@ -51,9 +53,9 @@
     <span #cache_bar class="irs-bar" [style]="{
               left:  coords.p_bar_x+'%',
               width: coords.p_bar_w+'%'
-          }"></span>
-    <span class="irs-shadow shadow-from" *ngIf="cache.shad_from.isVisible" [ngStyle]="cache.shad_from.style"></span>
-    <span class="irs-shadow shadow-to" *ngIf="cache.shad_to.isVisible" [ngStyle]="cache.shad_to.style"></span>
+          }" (mousedown)="drag_interval ? pointerDown('both', $event) : pointerClick('click', $event)"></span>
+    <span class="irs-shadow shadow-from" *ngIf="cache.shad_from.isVisible" [ngStyle]="cache.shad_from.style" (mousedown)="pointerClick('click', $event)"></span>
+    <span class="irs-shadow shadow-to" *ngIf="cache.shad_to.isVisible" [ngStyle]="cache.shad_to.style" (mousedown)="pointerClick('click', $event)"></span>
     <span #cache_s_from class="irs-handle from" (mousedown)="pointerDown('from', $event)"
       [ngStyle]="cache.s_from.style"><i></i><i></i><i></i></span>
     <span #cache_s_to class="irs-handle to" (mousedown)="pointerDown('to', $event)"
@@ -69,7 +71,20 @@
 <!--irs-disabled-->
 
 <pre *ngIf="showDebugInfo">
-  cache_to: {{cache.to | json}}
+  target:{{target}}
+  coords.p_bar_x:{{coords.p_bar_x}}
+  coords.p_bar_w:{{coords.p_bar_w}}
+  cache.from.style.left:<input type="text" [value]="cache.from.style.left" [(ngModel)]="cache.from.style.left"/>
+  cache.from.style.width:{{cache.from.style.width}}
+
+  <!-- coords.x_pointer:{{coords.x_pointer}}
+  coords.x_gap:{{coords.x_gap}}
+  coords.p_gap_left:{{coords.p_gap_left}}
+  coords.p_gap_right:{{coords.p_gap_right}}
+  coords.p_from_fake:{{coords.p_from_fake}}
+  coords.p_to_fake:{{coords.p_to_fake}}
+  coords.p_pointer:{{coords.p_pointer}} -->
+  <!-- cache_to: {{cache.to | json}}
   w_to: {{labels.w_to}}
   p_to_left: {{labels.p_to_left}}
   p_to_fake: {{labels.p_to_fake}}
@@ -80,7 +95,7 @@
   old_from: {{old_from}} - result.from {{result.from}}<br>
   old_to: {{old_to}} - result.to {{result.to}}<br>
   is_key: {{is_key}}<br>
-  coords.x_gap{{coords.x_gap}}
+  coords.x_gap{{coords.x_gap}} -->
 <!--  {{cache.single | json}}<br>-->
 <!--  {{cache.s_single | json}}<br>-->
   {{labels | json}}<br>

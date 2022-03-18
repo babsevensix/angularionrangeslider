@@ -1,17 +1,16 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef,
-  HostBinding,
-  HostListener,
+  ElementRef, HostListener,
   Input,
   OnInit,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
 
 interface gridsnap {
   left: string;
   label: string;
+  marginLeft?:string;
 }
 
 interface styleHtmlElement {
@@ -19,6 +18,7 @@ interface styleHtmlElement {
   width: string;
   backgroundColor?: string;
   display?: string;
+  visibility?: string;
 }
 
 interface statusHtmlElement {
@@ -71,6 +71,7 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
     | ElementRef<HTMLSpanElement>
     | undefined; //$cache.s_from
   @ViewChild('cache_s_to') cache_s_to: ElementRef<HTMLSpanElement> | undefined; //$cache.s_to
+  @ViewChild('cache_line') cache_line: ElementRef<HTMLSpanElement> | undefined;
 
   //Basic setup
   @Input() type: 'double' | 'single' = 'single';
@@ -111,7 +112,7 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
   @Input() hide_min_max: boolean = false; //Hides min and max labels.
   @Input() hide_from_to: boolean = false; //Hides from and to labels.
   @Input() force_edges: boolean = false; //Slider will be always inside it's container.
-  @Input() extra_classes: string = ''; //Traverse extra CSS-classes to slider container
+ // @Input() extra_classes: string = ''; //Traverse extra CSS-classes to slider container
   @Input() block: boolean = false; //Locks slider and makes it inactive (visually). input is NOT disabled. Can still be send with forms.
 
   //Prettify numbers
@@ -125,8 +126,8 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
   @Input() values_separator: string = ' - '; //Set your own separator for close values. Used for double type. Default: 10 — 100. Or you may set: 10 to 100, 10 + 100, 10 → 100 etc.
 
   //Data control
-  @Input() input_values_separator: string = ';'; //Separator for double values in input value property. Default FROM;TO. Only for double type
-  @Input() disable: boolean = false; //Locks slider and makes it inactive. input is disabled too. Invisible to forms.
+  // @Input() input_values_separator: string = ';'; //Separator for double values in input value property. Default FROM;TO. Only for double type
+  // @Input() disable: boolean = false; //Locks slider and makes it inactive. input is disabled too. Invisible to forms.
 
   @Input() showDebugInfo: boolean = false;
 
@@ -465,9 +466,9 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
     }
 
     if (this.values.length) {
-      debugger;
-      //this.cache.min.html = (this.decorate(this.p_values[this.min]));
-      //   this.$cache.max.html(this.decorate(this.options.p_values[this.options.max]));
+
+      this.cache.min.html = (this.decorate(this.p_values[this.min], undefined));
+      this.cache.max.html = this.decorate(this.p_values[this.max], undefined)//   this.$cache.max.html(this.decorate(this.options.p_values[this.options.max]));
     } else {
       let min_pretty = this._prettify(this.min);
       let max_pretty = this._prettify(this.max);
@@ -505,6 +506,35 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
     this.drawHandles();
   }
 
+/**
+         * Mousedown or touchstart
+         * for other slider elements, like diapason line
+         *
+         * @param target {String}
+         * @param e {Object} event object
+         */
+  pointerClick (target: string, event: MouseEvent): void {
+
+    const x = event.pageX; // || e.originalEvent.touches && e.originalEvent.touches[0].pageX;
+    if (event.button === 2) {
+       return;
+    }
+
+    // this.current_plugin = this.plugin_count;
+    this.target = target;
+
+    this.is_click = true;
+    this.coords.x_gap = this.officeLeft(this.cache_rs);// this.$cache.rs.offset().left;
+    this.coords.x_pointer = +(x - this.coords.x_gap).toFixed();
+
+    this.force_redraw = true;
+    this.calc();
+this.drawHandles();
+    // this.$cache.line.trigger("focus");
+  }
+
+
+
   pointerDown(target: string, event: MouseEvent) {
     let x = event.pageX; //||  event.originalEvent.touches && event.originalEvent.touches[0].pageX;
     if (event.button === 2) {
@@ -524,8 +554,8 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
     this.is_active = true;
     this.dragging = true;
 
-    this.coords.x_gap = this.cache_rs?.nativeElement.offsetLeft ?? 0; //this.coords.x_gap = this.$cache.rs.offset().left;
-    console.log('this.coords.x_gap', this.coords.x_gap);
+    this.coords.x_gap = this.officeLeft(this.cache_rs); //this.coords.x_gap = this.$cache.rs.offset().left;
+    // console.log('this.coords.x_gap', this.coords.x_gap);
     this.coords.x_pointer = x - this.coords.x_gap;
 
     this.calcPointerPercent();
@@ -607,7 +637,7 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
     if (this.calc_count === 10 || update) {
       this.calc_count = 0;
       this.coords.w_rs = this.outerWidth(this.cache_rs);
-
+      console.log('recalculated w_rs' , this.coords.w_rs);
       this.calcHandlePercent();
     }
 
@@ -919,7 +949,9 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
         this.labels.p_single_fake
       );
     } else {
-      this.labels.w_from = this.cache_from?.nativeElement.offsetWidth ?? 0;
+      this.labels.w_from = this.outerWidth(this.cache_from);
+      console.log('calculated w_from', this.labels.w_from, ' w_rs', this.coords.w_rs);
+
       this.labels.p_from_fake = (this.labels.w_from / this.coords.w_rs) * 100;
       this.labels.p_from_left =
         this.coords.p_from_fake +
@@ -944,6 +976,7 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
       );
 
       this.labels.w_single = this.outerWidth(this.cache_single); //   this.labels.w_single = this.$cache.single.outerWidth(false);
+      console.log('calculated w_single', this.labels.w_single);
       this.labels.p_single_fake =
         (this.labels.w_single / this.coords.w_rs) * 100;
       this.labels.p_single_left =
@@ -1062,21 +1095,21 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
    */
   drawLabels() {
     const values_num = this.values.length;
-    //let p_values = this.options.p_values;
+    const p_values = this.p_values;
     let text_single = '';
     let text_from = '';
     let text_to = '';
     let from_pretty: string;
     let to_pretty: string;
-    //
-    // if (this.options.hide_from_to) {
-    //   return;
-    // }
+
+    if (this.hide_from_to) {
+       return;
+    }
     //
     if (this.type === 'single') {
       if (values_num) {
-        // text_single = this.decorate(p_values[this.result.from]);
-        //     this.$cache.single.html(text_single);
+        text_single = this.decorate(p_values[this.result.from??0], undefined);
+        this.cache.single.html = text_single;//     this.$cache.single.html(text_single);
       } else {
         from_pretty = this._prettify(this.result.from);
 
@@ -1087,31 +1120,31 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
       this.calcLabels();
       //
       if (this.labels.p_single_left < this.labels.p_min + 1) {
-        this.cache.min.isVisible = false; //     this.$cache.min[0].style.visibility = "hidden";
+        this.cache.min.isVisible = false; //this.cache.min.style.visibility = 'hidden';//      this.$cache.min[0].style.visibility = "hidden";
       } else {
-        this.cache.min.isVisible = true; //     this.$cache.min[0].style.visibility = "visible";
+        this.cache.min.isVisible = true; // this.cache.min.style.visibility = 'visible';//    this.$cache.min[0].style.visibility = "visible";
       }
       //
       if (
         this.labels.p_single_left + this.labels.p_single_fake >
         100 - this.labels.p_max - 1
       ) {
-        this.cache.max.isVisible = false; //     this.$cache.max[0].style.visibility = "hidden";
+        this.cache.max.isVisible = false; //this.cache.max.style.visibility = 'hidden'; //     this.$cache.max[0].style.visibility = "hidden";
       } else {
-        this.cache.max.isVisible = true; //     this.$cache.max[0].style.visibility = "visible";
+        this.cache.max.isVisible = true; // this.cache.max.style.visibility = 'visible'; //    this.$cache.max[0].style.visibility = "visible";
       }
       //
     } else {
       if (values_num) {
         if (this.decorate_both) {
-          //   text_single = this.decorate(p_values[this.result.from]);
-          //   text_single += this.options.values_separator;
-          //   text_single += this.decorate(p_values[this.result.to]);
+             text_single = this.decorate(p_values[this.result.from??0], undefined);
+             text_single += this.values_separator;
+             text_single += this.decorate(p_values[this.result.to??0], undefined);
         } else {
-          //   text_single = this.decorate(p_values[this.result.from] + this.options.values_separator + p_values[this.result.to]);
+             text_single = this.decorate(p_values[this.result.from??0] + this.values_separator + p_values[this.result.to??0], undefined);
         }
-        //     text_from = this.decorate(p_values[this.result.from]);
-        //     text_to = this.decorate(p_values[this.result.to]);
+            text_from = this.decorate(p_values[this.result.from??0], undefined);
+            text_to = this.decorate(p_values[this.result.to??0], undefined);
         //
         this.cache.single.html = text_single;
         this.cache.from.html = text_from;
@@ -1142,51 +1175,60 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
 
       this.calcLabels();
 
+
       const min = Math.min(this.labels.p_single_left, this.labels.p_from_left);
       let single_left = this.labels.p_single_left + this.labels.p_single_fake;
       let to_left = this.labels.p_to_left + this.labels.p_to_fake;
       let max = Math.max(single_left, to_left);
-
+      //console.log(this.labels.p_from_left, this.labels.p_from_fake,this.labels.p_from_left+ this.labels.p_from_fake, this.labels.p_to_left );
       if (
         this.labels.p_from_left + this.labels.p_from_fake >=
         this.labels.p_to_left
       ) {
-        this.cache.from.isVisible = false; //     this.$cache.from[0].style.visibility = "hidden";
-        this.cache.to.isVisible = false; //     this.$cache.to[0].style.visibility = "hidden";
-        this.cache.single.isVisible = true; //     this.$cache.single[0].style.visibility = "visible";
+        this.cache.from.isVisible = true;
+        this.cache.from.style.visibility = 'hidden'; //.isVisible = false; //     this.$cache.from[0].style.visibility = "hidden";
+        this.cache.to.isVisible = true;
+        this.cache.to.style.visibility = 'hidden';// = false; //     this.$cache.to[0].style.visibility = "hidden";
+        this.cache.single.isVisible = true;
+        this.cache.single.style.visibility = 'visible';//     this.$cache.single[0].style.visibility = "visible";
+
 
         if (this.result.from === this.result.to) {
           if (this.target === 'from') {
-            this.cache.from.isVisible = true; //this.$cache.from[0].style.visibility = "visible";
+            this.cache.from.isVisible = true;
+            this.cache.from.style.visibility = 'visible'; //this.$cache.from[0].style.visibility = "visible";
           } else if (this.target === 'to') {
-            this.cache.to.isVisible = true; //this.$cache.to[0].style.visibility = "visible";
+            this.cache.to.isVisible = true;
+            this.cache.to.style.visibility  = 'visible'; //this.$cache.to[0].style.visibility = "visible";
           } else if (!this.target) {
-            this.cache.from.isVisible = true; //this.$cache.from[0].style.visibility = "visible";
+            this.cache.from.isVisible = true;
+            this.cache.from.style.visibility ='visible'; //this.$cache.from[0].style.visibility = "visible";
           }
-          this.cache.single.isVisible = false; //this.$cache.single[0].style.visibility = "hidden";
+          this.cache.single.isVisible = true;
+          this.cache.single.style.visibility = 'hidden';//this.$cache.single[0].style.visibility = "hidden";
           max = to_left;
         } else {
-          this.cache.from.isVisible = false; //       this.$cache.from[0].style.visibility = "hidden";
-          this.cache.to.isVisible = false; //       this.$cache.to[0].style.visibility = "hidden";
-          this.cache.single.isVisible = true; //       this.$cache.single[0].style.visibility = "visible";
+          this.cache.from.style.visibility = 'hidden'; //this.cache.from.isVisible = false; //       this.$cache.from[0].style.visibility = "hidden";
+          this.cache.to.style.visibility = 'hidden';//this.cache.to.isVisible = false; //       this.$cache.to[0].style.visibility = "hidden";
+          this.cache.single.style.visibility = 'visible'; //this.cache.single.isVisible = true; //       this.$cache.single[0].style.visibility = "visible";
           max = Math.max(single_left, to_left);
         }
       } else {
-        this.cache.from.isVisible = true; //     this.$cache.from[0].style.visibility = "visible";
-        this.cache.to.isVisible = true; //     this.$cache.to[0].style.visibility = "visible";
-        this.cache.single.isVisible = false; //     this.$cache.single[0].style.visibility = "hidden";
+        this.cache.from.style.visibility = 'visible';//this.cache.from.isVisible = true; //     this.$cache.from[0].style.visibility = "visible";
+        this.cache.to.style.visibility = 'visible';//this.cache.to.isVisible = true; //     this.$cache.to[0].style.visibility = "visible";
+        this.cache.single.style.visibility = 'hidden';//this.cache.single.isVisible = false; //     this.$cache.single[0].style.visibility = "hidden";
       }
 
       if (min < this.labels.p_min + 1) {
-        this.cache.min.isVisible = false; //     this.$cache.min[0].style.visibility = "hidden";
+        this.cache.min.isVisible = false; //this.cache.min.style.visibility = 'hidden';//     this.$cache.min[0].style.visibility = "hidden";
       } else {
-        this.cache.min.isVisible = true; //     this.$cache.min[0].style.visibility = "visible";
+        this.cache.min.isVisible = true; //this.cache.min.style.visibility = 'visible'; //     this.$cache.min[0].style.visibility = "visible";
       }
 
       if (max > 100 - this.labels.p_max - 1) {
-        this.cache.max.isVisible = false; // this.$cache.max[0].style.visibility = "hidden";
+        this.cache.max.isVisible = false; //  this.cache.max.style.visibility = 'hidden'; //this.$cache.max[0].style.visibility = "hidden";
       } else {
-        this.cache.max.isVisible = true; // this.$cache.max[0].style.visibility = "visible";
+        this.cache.max.isVisible = true; //this.cache.max.style.visibility = 'visible'; // this.$cache.max[0].style.visibility = "visible";
       }
     }
   }
@@ -1195,7 +1237,7 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
    * Draw handles
    */
   drawHandles() {
-    console.log('drawHandles');
+    //console.log('drawHandles');
     this.coords.w_rs = this.outerWidth(this.cache_rs); //this.$cache.rs.outerWidth(false);
 
     if (!this.coords.w_rs) {
@@ -1212,7 +1254,7 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
       this.calc(true);
       this.drawLabels();
       if (this.grid) {
-        //   if (this.options.grid) {
+
         this.calcGridMargin();
         this.calcGridLabels();
       }
@@ -1236,7 +1278,7 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
       this.force_redraw ||
       this.is_key
     ) {
-      console.log('drawHandles -  before draw labels');
+      // console.log('drawHandles -  before draw labels');
       this.drawLabels();
       //
       this.cache.bar.style.left = this.coords.p_bar_x + '%';
@@ -1541,6 +1583,7 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
         to_max = this.toFixed(to_max - (this.coords.p_handle / 100) * to_max);
         to_min = to_min + this.coords.p_handle / 2;
 
+        this.cache.shad_to.isVisible = true;
         this.cache.shad_to.style.display = 'block';
         this.cache.shad_to.style.left = to_min + '%';
         this.cache.shad_to.style.width = to_max + '%';
@@ -1595,21 +1638,21 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
       finish[i] = this.toFixed(start[i] + this.coords.big_p[i]);
     }
     //
-    // if (this.options.force_edges) {
-    //   if (start[0] < -this.coords.grid_gap) {
-    //     start[0] = -this.coords.grid_gap;
-    //     finish[0] = this.toFixed(start[0] + this.coords.big_p[0]);
+    if (this.force_edges) {
+       if (start[0] < -this.coords.grid_gap) {
+         start[0] = -this.coords.grid_gap;
+         finish[0] = this.toFixed(start[0] + this.coords.big_p[0]);
+
+         this.coords.big_x[0] = this.coords.grid_gap;
+       }
     //
-    //     this.coords.big_x[0] = this.coords.grid_gap;
-    //   }
+       if (finish[num - 1] > 100 + this.coords.grid_gap) {
+         finish[num - 1] = 100 + this.coords.grid_gap;
+         start[num - 1] = this.toFixed(finish[num - 1] - this.coords.big_p[num - 1]);
     //
-    //   if (finish[num - 1] > 100 + this.coords.grid_gap) {
-    //     finish[num - 1] = 100 + this.coords.grid_gap;
-    //     start[num - 1] = this.toFixed(finish[num - 1] - this.coords.big_p[num - 1]);
-    //
-    //     this.coords.big_x[num - 1] = this.toFixed(this.coords.big_p[num - 1] - this.coords.grid_gap);
-    //   }
-    // }
+         this.coords.big_x[num - 1] = this.toFixed(this.coords.big_p[num - 1] - this.coords.grid_gap);
+       }
+    }
     //
     // this.calcGridCollision(2, start, finish);
     // this.calcGridCollision(4, start, finish);
@@ -1642,17 +1685,17 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
         this.coords.p_gap = this.toFixed(
           this.coords.p_pointer - this.coords.p_from_fake
         );
-        // this.$cache.s_from.addClass("state_hover");
-        // this.$cache.s_from.addClass("type_last");
-        // this.$cache.s_to.removeClass("type_last");
+        this.cache_s_from?.nativeElement.classList.add('state_hover'); // this.$cache.s_from.addClass("state_hover");
+        this.cache_s_from?.nativeElement.classList.add('type_last');// this.$cache.s_from.addClass("type_last");
+        this.cache_s_to?.nativeElement.classList.remove('type_last');// this.$cache.s_to.removeClass("type_last");
         break;
       case 'to':
         this.coords.p_gap = this.toFixed(
           this.coords.p_pointer - this.coords.p_to_fake
         );
-        // this.$cache.s_to.addClass("state_hover");
-        // this.$cache.s_to.addClass("type_last");
-        // this.$cache.s_from.removeClass("type_last");
+        this.cache_s_to?.nativeElement.classList.add('state_hover');// this.$cache.s_to.addClass("state_hover");
+        this.cache_s_to?.nativeElement.classList.add('type_last');// this.$cache.s_to.addClass("type_last");
+        this.cache_s_from?.nativeElement.classList.remove('type_last');// this.$cache.s_from.removeClass("type_last");
         break;
       case 'both':
         this.coords.p_gap_left = this.toFixed(
@@ -1661,8 +1704,8 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
         this.coords.p_gap_right = this.toFixed(
           this.coords.p_to_fake - this.coords.p_pointer
         );
-        // this.$cache.s_to.removeClass("type_last");
-        // this.$cache.s_from.removeClass("type_last");
+        this.cache_s_to?.nativeElement.classList.remove('type_last');// this.$cache.s_to.removeClass("type_last");
+        this.cache_s_from?.nativeElement.classList.remove('type_last');// this.$cache.s_from.removeClass("type_last");
         break;
     }
   }
@@ -1739,7 +1782,7 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
 
       result = this.convertToValue(big_w);
       if (this.values.length) {
-        //     result = o.p_values[result];
+        result = this.p_values[result];
       } else {
         result = this._prettify(result);
         bigSnap.label = '' + result;
@@ -1748,9 +1791,7 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
     }
     this.coords.big_num = Math.ceil(big_num + 1);
 
-    // this.$cache.cont.addClass("irs-with-grid");
-    // this.$cache.grid.html(html);
-    // this.cacheGridLabels();
+
   }
 
   decorate(num: any, original: any) {
@@ -1882,4 +1923,95 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
     }
     return 0;
   }
+
+  private officeLeft(element: ElementRef<HTMLSpanElement> | undefined): number{
+    if (element && element.nativeElement) {
+      const rect = element.nativeElement.getBoundingClientRect();
+
+      return rect.left + window.scrollX;
+    }
+    return 0;
+  }
+
+/**
+         * Keyborard controls for focused slider
+         *
+         * @param target {String}
+         * @param e {Object} event object
+         * @returns {boolean|undefined}
+         */
+  keyDown(event: KeyboardEvent){
+     if ( event.altKey || event.ctrlKey || event.shiftKey || event.metaKey) {
+       return;
+   }
+
+   switch (event.which) {
+      case 83: // W
+      case 65: // A
+      case 40: // DOWN
+      case 37: // LEFT
+          // e.preventDefault();
+          this.moveByKey(false);
+          break;
+
+      case 87: // S
+      case 68: // D
+      case 38: // UP
+      case 39: // RIGHT
+          // e.preventDefault();
+          this.moveByKey(true);
+          break;
+   }
+
+  // return true;
+  }
+
+   /**
+         * Move by key
+         *
+         * @param right {boolean} direction to move
+         */
+    moveByKey (right: boolean) {
+      var p = this.coords.p_pointer;
+      var p_step = (this.max - this.min) / 100;
+      p_step = this.step / p_step;
+
+      if (right) {
+          p += p_step;
+      } else {
+          p -= p_step;
+      }
+
+      this.coords.x_pointer = this.toFixed(this.coords.w_rs / 100 * p);
+      this.is_key = true;
+      this.calc();
+      this.drawHandles();
+    }
+
+
+  /**
+         * Focus with tabIndex
+         *
+         * @param e {Object} event object
+         */
+   pointerFocus(e: any) {
+    // if (!this.target) {
+    //     let x;
+    //     let $handle;
+
+    //     if (this.type === "single") {
+    //         $handle = this.cache_single;
+    //     } else {
+    //         $handle = this.cache_from;
+    //     }
+
+    //     x = this.officeLeft($handle);
+    //     const width = $handle?.nativeElement.getBoundingClientRect().width;
+    //     x += ((width??0) / 2) - 1;
+
+
+    //     this.pointerClick("single", <MouseEvent>{preventDefault: function () {}, pageX: x});
+    // }
+  }
+
 }

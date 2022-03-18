@@ -1,18 +1,131 @@
-<!-- <div style="width:1000px;background-color: aqua;">
+<!--<div style="width:100%;">
   <app-ion-range-slider [min]="0" [max]="5000" [step]="1" [grid]="true" [grid_num]="5" [skin]="'flat'" [type]="'double'"
-    [showDebugInfo]="true">
+    >
   </app-ion-range-slider>
-</div> -->
-<div style="display: flex">
-  <div style="width:50%; margin:5rem;">
-    <app-ion-range-slider [min]="0" [max]="50" [step]="5" [grid]="true" [grid_num]="5" [grid_snap]="false"
-      [grid_margin]="true" [block]="false" [prefix]="'€'" [postfix]="'$'" [skin]="'modern'" [type]="'double'"
-      [from]="25" [to]="45" [showDebugInfo]="true"></app-ion-range-slider>
+</div>
+ <div style="display: flex">
+  <div style="width:50%; margin:5px;">
+    <app-ion-range-slider
+        [type]="'double'"
+        [min]="0"
+        [max]="50"
+        [from]="25"
+        [to]="45"
+        [step]="5"
+
+
+
+        [grid]="true" [grid_num]="5" [grid_snap]="false"
+      [grid_margin]="true" [block]="false" [prefix]="'€'" [postfix]="'$'" [skin]="'modern'"
+       [showDebugInfo]="false" [drag_interval]="false"></app-ion-range-slider>
   </div>
-  <div style="width:50%; margin:5rem;">
+  <div style="width:50%; margin:5px;">
     <app-ion-range-slider [min]="0" [max]="50" [step]="5" [grid]="true" [grid_num]="5" [grid_snap]="false"
       [grid_margin]="true" [block]="false" [prefix]="'€'" [postfix]="'$'" [skin]="'flat'" [type]="'double'" [from]="25"
-      [to]="45" [showDebugInfo]="true"></app-ion-range-slider>
+      [to]="45" [showDebugInfo]="false" [drag_interval]="true" ></app-ion-range-slider>
   </div>
 
 </div>
+<div style="display: flex;">
+  <div style="width:50%; margin:5px;">
+    <app-ion-range-slider [type]="'single'" [values]="['a', 'b', 'c', 'e', 'f']">
+
+    </app-ion-range-slider>
+  </div>
+  <div style="width:50%; margin:5px;">
+    <app-ion-range-slider [type]="'double'" [values]="arrayChars" [grid]="true" [drag_interval]="true" [from]="2" [grid_snap]="true">
+
+    </app-ion-range-slider>
+  </div>
+</div>
+
+
+<div style="display: flex;">
+  <div style="width:50%; margin:5px;">
+    <app-ion-range-slider [type]="'double'" [min_interval]="5" [max_interval]="10" [to]="10" [drag_interval]="true">
+
+    </app-ion-range-slider>
+  </div>
+  <div style="width:50%; margin:5px;">
+    <app-ion-range-slider [type]="'double'" [from_fixed]="true" [from]="10" [to]="11" [grid_snap]="true" [min]="0" [max]="50">
+
+    </app-ion-range-slider>
+  </div>
+</div>
+
+<div style="display: flex;">
+  <div style="width:50%; margin:5px;">
+    <app-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="0.1" [from]="20" [from_min]="5" [from_max]="35" [to]="50" [to_min]="45" [to_max]="90" [drag_interval]="true"
+      [from_shadow]="true"
+      [to_shadow]="true"
+      [to_fixed]="true"
+      [skin]="'modern'"
+    >
+
+    </app-ion-range-slider>
+  </div>
+  <div style="width:50%; margin:5px;">
+    <app-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="0.1" [from]="20"
+    [from_min]="5"
+    [from_max]="35"
+    [to]="50"
+    [to_min]="45"
+    [to_max]="90" [drag_interval]="true"
+    [from_shadow]="true"
+    [to_shadow]="true"
+    [hide_min_max]="true"
+    [hide_from_to]="true"
+    [skin]="'modern'"
+  >
+
+  </app-ion-range-slider>
+  </div>
+</div>
+
+<div style="display: flex;">
+  <div style="width:50%; margin:5px;">
+    <app-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="0.1" [from]="20"  [to]="50"  [drag_interval]="true"
+      [from_shadow]="true"
+      [to_shadow]="true"
+
+      [force_edges]="true"
+    >
+
+    </app-ion-range-slider>
+  </div>
+  <div style="width:50%; margin:5px;">
+    <app-ion-range-slider [type]="'double'" [min]="0" [max]="5000000" [step]="10000" [from]="20"
+
+    [to]="700000"
+    [drag_interval]="true"
+    [force_edges]="true"
+    [prettify_enabled]="true"
+    [prettify_separator]="'.'"
+    [prefix]="'€'"
+    [postfix]="'k'"
+    [max_postfix]="'+'"
+    [values_separator]="' → '"
+    [keyboard]="true"
+    [grid]="true"
+  >
+
+  </app-ion-range-slider>
+  </div>
+</div>-->
+
+<app-ion-range-slider [type]="'double'" [min]="0" [max]="5000000" [step]="10000" [from]="20"
+
+    [to]="700000"
+    [drag_interval]="true"
+    [force_edges]="true"
+    [prettify_enabled]="true"
+    [prettify_separator]="'.'"
+    [prefix]="'€'"
+    [postfix]="'k'"
+    [max_postfix]="'+'"
+    [values_separator]="' → '"
+    [keyboard]="true"
+    [grid]="true"
+  >
+
+  </app-ion-range-slider>
