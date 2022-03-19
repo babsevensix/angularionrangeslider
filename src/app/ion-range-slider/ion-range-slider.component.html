@@ -20,7 +20,7 @@
     <span #cache_single class="irs-single" *ngIf="cache.single.isVisible" (mousedown)="pointerDown('single', $event)"
       [ngStyle]="cache.single.style">{{cache.single.html}}</span>
   </span>
-  <span class="irs-grid" *ngIf="grid" [ngStyle]="cache.grid.style">
+  <span #cache_grid class="irs-grid" *ngIf="grid" [ngStyle]="cache.grid.style">
     <span class="irs-grid-pol small" *ngFor="let v of smallGridSnap" [style]="{
             left: v.left
           }"></span>
@@ -32,9 +32,11 @@
 
       </span>
 
-      <span class="irs-grid-text " [style]="{
-              left: v.left
-            }" style="margin-left: -0.80078%;">{{v.label}}</span>
+      <span class="irs-grid-text js-grid-text-{{idx}}" [style]="{
+              left: v.left,
+              marginLeft: v.marginLeft,
+              visibility: v.visibility
+            }" >{{v.label}}</span>
     </ng-container>
 
   </span>
@@ -71,6 +73,9 @@
 <!--irs-disabled-->
 
 <pre *ngIf="showDebugInfo">
+
+  this.coords.big_w:{{coords.big_w | json}}
+  bigGridSnap: {{bigGridSnap | json}}
   target:{{target}}
   coords.p_bar_x:{{coords.p_bar_x}}
   coords.p_bar_w:{{coords.p_bar_w}}

@@ -11,6 +11,7 @@ interface gridsnap {
   left: string;
   label: string;
   marginLeft?:string;
+  visibility?: string;
 }
 
 interface styleHtmlElement {
@@ -72,6 +73,8 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
     | undefined; //$cache.s_from
   @ViewChild('cache_s_to') cache_s_to: ElementRef<HTMLSpanElement> | undefined; //$cache.s_to
   @ViewChild('cache_line') cache_line: ElementRef<HTMLSpanElement> | undefined;
+  @ViewChild('cache_grid') cache_grid: ElementRef<HTMLSpanElement> | undefined;
+
 
   //Basic setup
   @Input() type: 'double' | 'single' = 'single';
@@ -257,6 +260,9 @@ export class IonRangeSliderComponent implements OnInit, AfterViewInit {
     shad_from: { style: { left: '', width: '' }, html: '', isVisible: false },
     shad_to: { style: { left: '', width: '' }, html: '', isVisible: false },
   };
+
+
+  cache_grid_labels: HTMLSpanElement[] = [];
 
   constructor() {}
 
@@ -1255,8 +1261,11 @@ this.drawHandles();
       this.drawLabels();
       if (this.grid) {
 
-        this.calcGridMargin();
-        this.calcGridLabels();
+
+          this.calcGridMargin();
+          this.calcGridLabels();
+
+
       }
       this.force_redraw = true;
       this.coords.w_rs_old = this.coords.w_rs;
@@ -1619,52 +1628,7 @@ this.drawHandles();
     this.cache.grid.style.left = this.coords.grid_gap + '%';
   }
 
-  calcGridLabels() {
-    let i: number;
-    let start: number[] = [];
-    let finish: number[] = [];
 
-    //   var  label,
-    let num = this.coords.big_num;
-    //
-    for (i = 0; i < num; i++) {
-      //this.coords.big_w[i] = this.$cache.grid_labels[i].outerWidth(false);
-      this.coords.big_p[i] = this.toFixed(
-        (this.coords.big_w[i] / this.coords.w_rs) * 100
-      );
-      this.coords.big_x[i] = this.toFixed(this.coords.big_p[i] / 2);
-
-      start[i] = this.toFixed(this.coords.big[i] - this.coords.big_x[i]);
-      finish[i] = this.toFixed(start[i] + this.coords.big_p[i]);
-    }
-    //
-    if (this.force_edges) {
-       if (start[0] < -this.coords.grid_gap) {
-         start[0] = -this.coords.grid_gap;
-         finish[0] = this.toFixed(start[0] + this.coords.big_p[0]);
-
-         this.coords.big_x[0] = this.coords.grid_gap;
-       }
-    //
-       if (finish[num - 1] > 100 + this.coords.grid_gap) {
-         finish[num - 1] = 100 + this.coords.grid_gap;
-         start[num - 1] = this.toFixed(finish[num - 1] - this.coords.big_p[num - 1]);
-    //
-         this.coords.big_x[num - 1] = this.toFixed(this.coords.big_p[num - 1] - this.coords.grid_gap);
-       }
-    }
-    //
-    // this.calcGridCollision(2, start, finish);
-    // this.calcGridCollision(4, start, finish);
-    //
-    for (i = 0; i < num; i++) {
-      //   label = this.$cache.grid_labels[i][0];
-      //
-      //   if (this.coords.big_x[i] !== Number.POSITIVE_INFINITY) {
-      //     label.style.marginLeft = -this.coords.big_x[i] + "%";
-      //   }
-    }
-  }
 
   /**
    * Determine which handles was clicked last
@@ -1715,10 +1679,13 @@ this.drawHandles();
 
   calculateGrid() {
     if (!this.grid) {
-      this.bigGridSnap = [];
-      this.smallGridSnap = [];
+
+
       return;
     }
+    this.bigGridSnap = [];
+    this.smallGridSnap = [];
+    this.cache_grid_labels = [];
 
     let i: number;
     let z: number;
@@ -1791,9 +1758,95 @@ this.drawHandles();
     }
     this.coords.big_num = Math.ceil(big_num + 1);
 
-
+    this.cacheGridLabels();
   }
 
+  cacheGridLabels () {
+    // var $label, i,
+    const    num = this.coords.big_num;
+
+     for (let i = 0; i < num; i++) {
+       const label = this.cache_grid?.nativeElement.querySelector<HTMLSpanElement>('.js-grid-text-'+i);
+        if (label)
+       this.cache_grid_labels.push(label);
+    //     $label = this.$cache.grid.find(".js-grid-text-" + i);
+    //     this.$cache.grid_labels.push($label);
+     }
+
+    this.calcGridLabels();
+}
+calcGridLabels() {
+  let i: number;
+  let start: number[] = [];
+  let finish: number[] = [];
+
+  //   var  label,
+  let num = this.coords.big_num;
+  //
+  for (i = 0; i < num; i++) {
+    const ow = this.outerWidth(this.cache_grid_labels[i]); //this.coords.big_w[i] = this.$cache.grid_labels[i].outerWidth(false);
+    if (ow > 0)
+      this.coords.big_w[i] = ow;
+
+    this.coords.big_p[i] = this.toFixed(
+      (this.coords.big_w[i] / this.coords.w_rs) * 100
+    );
+    this.coords.big_x[i] = this.toFixed(this.coords.big_p[i] / 2);
+
+    start[i] = this.toFixed(this.coords.big[i] - this.coords.big_x[i]);
+    finish[i] = this.toFixed(start[i] + this.coords.big_p[i]);
+  }
+  //
+  if (this.force_edges) {
+     if (start[0] < -this.coords.grid_gap) {
+       start[0] = -this.coords.grid_gap;
+       finish[0] = this.toFixed(start[0] + this.coords.big_p[0]);
+
+       this.coords.big_x[0] = this.coords.grid_gap;
+     }
+  //
+     if (finish[num - 1] > 100 + this.coords.grid_gap) {
+       finish[num - 1] = 100 + this.coords.grid_gap;
+       start[num - 1] = this.toFixed(finish[num - 1] - this.coords.big_p[num - 1]);
+  //
+       this.coords.big_x[num - 1] = this.toFixed(this.coords.big_p[num - 1] - this.coords.grid_gap);
+     }
+  }
+
+  this.calcGridCollision(2, start, finish);
+  this.calcGridCollision(4, start, finish);
+
+  for (i = 0; i < num; i++) {
+    // const   label = this.cache_grid_labels[i];
+
+       if (this.coords.big_x[i] !== Number.POSITIVE_INFINITY) {
+         this.bigGridSnap[i].marginLeft =  -this.coords.big_x[i] + "%";  //     label.style.marginLeft = -this.coords.big_x[i] + "%";
+       }
+  }
+}
+
+// Collisions Calc Beta
+      // TODO: Refactor then have plenty of time
+      calcGridCollision (step: number, start: number[], finish: number[]) {
+        // var i, next_i, label,
+        const  num = this.coords.big_num;
+
+
+        for (let i = 0; i < num; i += step) {
+        let     next_i = i + (step / 2);
+            if (next_i >= num) {
+                break;
+            }
+
+       // let label = this.cache_grid_labels[next_i];//     label = this.$cache.grid_labels[next_i][0];
+
+            if (finish[i] <= start[next_i]) {
+              this.bigGridSnap[next_i].visibility = 'visible';//label.style.visibility = "visible";
+            } else {
+              this.bigGridSnap[next_i].visibility = 'hidden';//label.style.visibility = "hidden";
+            }
+        }
+    }
   decorate(num: any, original: any) {
     let decorated = '';
     // o = this.options;
@@ -1916,8 +1969,10 @@ this.drawHandles();
     }
   }
 
-  private outerWidth(element: ElementRef<HTMLSpanElement> | undefined): number {
-    if (element && element.nativeElement) {
+  private outerWidth(element: ElementRef<HTMLSpanElement> | HTMLSpanElement | undefined): number {
+    if (element instanceof HTMLSpanElement){
+      return element.offsetWidth;
+    }else if (element && element.nativeElement) {
       return element.nativeElement.offsetWidth;
       //return element.nativeElement.getBoundingClientRect().width;
     }

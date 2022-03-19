@@ -1,4 +1,4 @@
-<!--<div style="width:100%;">
+<div style="width:100%;">
   <app-ion-range-slider [min]="0" [max]="5000" [step]="1" [grid]="true" [grid_num]="5" [skin]="'flat'" [type]="'double'"
     >
   </app-ion-range-slider>
@@ -111,11 +111,11 @@
 
   </app-ion-range-slider>
   </div>
-</div>-->
+</div>
 
-<app-ion-range-slider [type]="'double'" [min]="0" [max]="5000000" [step]="10000" [from]="20"
+<app-ion-range-slider [type]="'double'" [min]="0" [max]="5000000" [step]="10000"
 
-    [to]="700000"
+
     [drag_interval]="true"
     [force_edges]="true"
     [prettify_enabled]="true"
@@ -126,6 +126,13 @@
     [values_separator]="' → '"
     [keyboard]="true"
     [grid]="true"
+    [grid_margin]="true"
+    [grid_num]="20"
+    [grid_snap]="false"
+    [step]="100000"
+    [from]="200000"
+    [to]=  "700000"
+    [showDebugInfo]="false"
   >
 
   </app-ion-range-slider>
