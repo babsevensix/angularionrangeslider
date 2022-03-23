@@ -1,18 +1,19 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { NgxIonRangeSliderModule } from '@local/ngx-ion-range-slider';
 import { AppComponent } from './app.component';
-import { IonRangeSliderComponent } from './ion-range-slider/ion-range-slider.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent,
-    IonRangeSliderComponent
+    AppComponent
+
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    NgxIonRangeSliderModule
   ],
   providers: [],
   bootstrap: [AppComponent]

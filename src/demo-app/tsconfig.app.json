@@ -1,0 +1,26 @@
+
+{
+  "extends": "../../tsconfig.json",
+  "angularCompilerOptions": {
+    "paths": {
+      "@local/ngx-ion-range-slider": [ "../ngx-ion-range-slider/lib/public-api.ts" ]
+    }
+  },
+  "compilerOptions": {
+    "outDir": "../../out-tsc/demo-app",
+    "module": "es2015",
+    "baseUrl": "",
+    "types": [],
+    "moduleResolution": "node",
+    "paths": {
+      "@local/ngx-ion-range-slider": [ "../ngx-ion-range-slider/lib/public-api.ts" ]
+    }
+  },
+  "files": [
+    "main.ts",
+    "polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ]
+}

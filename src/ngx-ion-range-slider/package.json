@@ -1,0 +1,44 @@
+{
+  "name": "@angular-ion-range-slider/ngx-ion-range-slider",
+  "version": "1.0.0",
+  "description": "ION Range Slider",
+  "keywords": [
+    "slider",
+    "ui",
+    "component",
+    "angular",
+    "ng",
+    "ngx"
+  ],
+  "author": "Alberto Bellemo Bullo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/babsevensix/angularionrangeslider.git"
+  },
+  "bugs": {
+    "url": "https://github.com/babsevensix/angularionrangeslider/issues"
+  },
+  "homepage": "https://github.com/babsevensix/angularionrangeslider#readme",
+  "dependencies": {
+    "detect-passive-events": "^2.0.3",
+    "rxjs": "^6.5.2"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=6.1.0",
+    "@angular/common": ">=6.1.0",
+    "@angular/forms": ">=6.1.0"
+  },
+  "ngPackage": {
+    "$schema": "./node_modules/ng-packagr/ng-package.schema.json",
+    "lib": {
+      "entryFile": "lib/public-api.ts"
+    },
+    "dest": "../../dist/ngx-ion-range-slider",
+    "whitelistedNonPeerDependencies": [
+      "detect-passive-events",
+      "rxjs"
+    ]
+  }
+
+}

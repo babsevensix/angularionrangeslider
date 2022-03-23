@@ -1,0 +1,17 @@
+{
+  "extends": "../../tslint.json",
+  "rules": {
+    "directive-selector": [
+      true,
+      "attribute",
+      "ngxIonRangeSlider",
+      "camelCase"
+      ],
+    "component-selector": [
+      true,
+      "element",
+      "ngx-ion-range-slider",
+      "kebab-case"
+    ]
+  }
+}

@@ -3,8 +3,11 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ionrangesliderangular": {
+    "ngx-ion-range-slider-demo-app": {
+
+
       "projectType": "application",
+
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
@@ -14,29 +17,31 @@
         }
       },
       "root": "",
-      "sourceRoot": "src",
+      "sourceRoot": "src/demo-app",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/ionrangesliderangular",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
+            "outputPath": "dist/demo-app",
+            "index": "src/demo-app/index.html",
+            "main": "src/demo-app/main.ts",
+            "polyfills": "src/demo-app/polyfills.ts",
+            "tsConfig": "src/demo-app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
+              "src/demo-app/favicon.ico",
+              "src/demo-app/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/demo-app/styles.scss"
             ],
+
             "scripts": []
           },
           "configurations": {
             "production": {
+
               "budgets": [
                 {
                   "type": "initial",
@@ -51,11 +56,13 @@
               ],
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "src/demo-app/environments/environment.ts",
+                  "with": "src/demo-app/environments/environment.prod.ts"
                 }
               ],
               "outputHashing": "all"
+
+
             },
             "development": {
               "buildOptimizer": false,
@@ -63,49 +70,95 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "tsConfig": "src/demo-app/tsconfig.app.json"
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ngx-ion-range-slider-demo-app:build"
+          },
           "configurations": {
             "production": {
-              "browserTarget": "ionrangesliderangular:build:production"
+              "browserTarget": "ngx-ion-range-slider-demo-app:build:production"
             },
             "development": {
-              "browserTarget": "ionrangesliderangular:build:development"
+              "browserTarget": "ngx-ion-range-slider-demo-app:build:development"
             }
           },
           "defaultConfiguration": "development"
+
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ionrangesliderangular:build"
+            "browserTarget": "ngx-ion-range-slider-demo-app:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
+            "main": "src/demo-app/test.ts",
+            "polyfills": "src/demo-app/polyfills.ts",
+            "tsConfig": "src/demo-app/tsconfig.spec.json",
+            "karmaConfig": "src/demo-app/karma.conf.js",
+            "styles": [
+              "src/demo-app/styles.scss"
+            ],
+            "scripts": [],
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
+              "src/demo-app/favicon.ico",
+              "src/demo-app/assets"
+            ]
+
+
+          }
+        },
+        "lint":{
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "src/demo-app/tsconfig.app.json",
+              "src/demo-app/tsconfig.spec.json"
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "scripts": []
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "ngx-ion-range-slider-demo-app-e2e":{
+      "root": "e2e/",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "ngx-ion-range-slider-demo-app:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "ngx-ion-range-slider-demo-app:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": "e2e/tsconfig.e2e.json",
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }
     }
   },
-  "defaultProject": "ionrangesliderangular"
+  "defaultProject": "ngx-ion-range-slider-demo-app"
 }

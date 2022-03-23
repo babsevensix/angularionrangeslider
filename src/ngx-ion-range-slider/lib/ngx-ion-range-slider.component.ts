@@ -6,50 +6,15 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-
-interface gridsnap {
-  left: string;
-  label: string;
-  marginLeft?:string;
-  visibility?: string;
-}
-
-interface styleHtmlElement {
-  left: string;
-  width: string;
-  backgroundColor?: string;
-  display?: string;
-  visibility?: string;
-}
-
-interface statusHtmlElement {
-  html: string;
-  style: styleHtmlElement;
-  isVisible: boolean;
-}
-
-interface Cache {
-  bar: statusHtmlElement;
-  from: statusHtmlElement;
-  to: statusHtmlElement;
-  s_from: statusHtmlElement;
-  s_to: statusHtmlElement;
-  min: statusHtmlElement;
-  max: statusHtmlElement;
-  single: statusHtmlElement;
-  grid: statusHtmlElement;
-  s_single: statusHtmlElement;
-  shad_single: statusHtmlElement;
-  shad_from: statusHtmlElement;
-  shad_to: statusHtmlElement;
-}
+import { Cache } from './Cache';
+import { gridsnap } from './gridsnap';
 
 @Component({
-  selector: 'app-ion-range-slider',
-  templateUrl: './ion-range-slider.component.html',
-  styleUrls: ['./ion-range-slider.component.scss'],
+  selector: 'ngx-ion-range-slider',
+  templateUrl: './ngx-ion-range-slider.component.html',
+  styleUrls: ['./ngx-ion-range-slider.component.scss'],
 })
-export class IonRangeSliderComponent implements OnInit, AfterViewInit {
+export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit {
   @ViewChild('ionRangeSlider', { static: true }) ionRangeSlider!: ElementRef;
 
   @ViewChild('.irs-single', { static: false })
