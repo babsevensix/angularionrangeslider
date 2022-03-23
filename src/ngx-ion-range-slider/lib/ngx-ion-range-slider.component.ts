@@ -3,7 +3,9 @@ import {
   Component,
   ElementRef, HostListener,
   Input,
+  OnChanges,
   OnInit,
+  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import { Cache } from './Cache';
@@ -14,7 +16,7 @@ import { gridsnap } from './gridsnap';
   templateUrl: './ngx-ion-range-slider.component.html',
   styleUrls: ['./ngx-ion-range-slider.component.scss'],
 })
-export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit {
+export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('ionRangeSlider', { static: true }) ionRangeSlider!: ElementRef;
 
   @ViewChild('.irs-single', { static: false })
@@ -231,18 +233,27 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit {
 
   constructor() {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+
+  //  throw new Error('Method not implemented.');
+    this.validate();
+  }
+
+
+
+
   ngAfterViewInit(): void {
     console.log('ngAfterViewInit');
 
     setTimeout(() => {
-      this.validate();
+    //   this.validate();
       this.init(false);
       this.calculateGrid();
     }, 200);
-    // setTimeout(() => {
-    //   this.init(false);
-    //   this.calculateGrid();
-    // }, 400);
+    setTimeout(() => {
+      this.init(false);
+      this.calculateGrid();
+    }, 400);
   }
 
   ngOnInit(): void {}
@@ -393,12 +404,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit {
   }
 
   init(is_update: boolean = false) {
-    // if (this.value < this.min) {
-    //   this.value = this.min;
-    // }
-    // if (this.value > this.max) {
-    //   this.value = this.max;
-    // }
+
     this.no_diapason = false;
     this.coords.p_step = this.convertToPercent(this.step, true);
 
@@ -491,7 +497,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit {
        return;
     }
 
-    // this.current_plugin = this.plugin_count;
     this.target = target;
 
     this.is_click = true;
@@ -526,17 +531,13 @@ this.drawHandles();
     this.dragging = true;
 
     this.coords.x_gap = this.officeLeft(this.cache_rs); //this.coords.x_gap = this.$cache.rs.offset().left;
-    // console.log('this.coords.x_gap', this.coords.x_gap);
+
     this.coords.x_pointer = x - this.coords.x_gap;
 
     this.calcPointerPercent();
     this.changeLevel(target);
 
-    // if (is_old_ie) {
-    //   $("*").prop("unselectable", true);
-    // }
 
-    // this.$cache.line.trigger("focus");
 
     this.updateScene();
   }

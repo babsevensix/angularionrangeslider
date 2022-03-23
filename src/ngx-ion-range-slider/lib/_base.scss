@@ -2,6 +2,10 @@
 @import 'mixins';
 @import 'skins/flat.scss';
 @import 'skins/modern';
+@import 'skins/big';
+@import 'skins/round';
+@import 'skins/sharp';
+@import 'skins/square';
 
 .irs {
     @include pos-r();
