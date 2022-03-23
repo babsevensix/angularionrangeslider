@@ -239,10 +239,10 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit {
       this.init(false);
       this.calculateGrid();
     }, 200);
-    setTimeout(() => {
-      this.init(false);
-      this.calculateGrid();
-    }, 400);
+    // setTimeout(() => {
+    //   this.init(false);
+    //   this.calculateGrid();
+    // }, 400);
   }
 
   ngOnInit(): void {}
