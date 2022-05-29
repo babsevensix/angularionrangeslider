@@ -1,0 +1,241 @@
+<div style="width:100%;">
+  <div style="border: solid 1px black; border-radius: 20px; padding:20px;">
+    <h1>CUSTOMIZE</h1>
+
+    <div style="display: flex; flex-direction: row">
+      <div>
+        <div>
+          <h2>Basic Setup</h2>
+        </div>
+        <div>
+          <div>
+            <label for="">Type</label>
+            <select [(ngModel)]="type">
+              <option [value]="'single'">Single</option>
+              <option [value]="'double'">Double</option>
+            </select>
+          </div>
+          <div>
+            <label for="">Min Value</label>
+            <input type="number" [(ngModel)]="min">
+          </div>
+          <div>
+            <label for="">Max Value</label>
+            <input type="number" [(ngModel)]="max">
+          </div>
+          <div>
+            <label for="">{{type === 'single' ? 'Value' : 'From value'}}</label>
+            <input type="number" [(ngModel)]="from">
+          </div>
+          <div *ngIf="type === 'double'">
+            <label for="">To Value</label>
+            <input type="number" [(ngModel)]="to">
+          </div>
+        </div>
+      </div>
+
+
+      <div>
+        <div><h2>Advanced setup</h2></div>
+        <div>
+          <div>
+            <label for="">Step</label>
+            <input type="number" [(ngModel)]="step">
+          </div>
+
+          <div>
+            <label for="">Values</label>
+            <input type="text" [(ngModel)]="newValueValues"/>
+            <button (click)="onAddValue()" [disabled]="newValueValues === ''">Add Value</button>
+            <button (click)="onSetMonthsValues()">Set months value</button>
+
+            <ul>
+              <li *ngFor="let value of values">{{value}}
+                <button (click)="onRemoveValue(value)">Remove</button>
+              </li>
+            </ul>
+
+          </div>
+
+        </div>
+      </div>
+
+
+    </div>
+
+    <div>
+      <div>
+        <div><h2>Grid Setup</h2></div>
+        <div>
+          <div>
+            <label for="">Enables grid of values</label>
+            <input type="checkbox" [(ngModel)]="showGrid">
+          </div>
+          <div *ngIf="!grid_snap">
+            <label for="" >Number of grid units</label>
+            <input type="number" [(ngModel)]="gridNum">
+          </div>
+
+          <div>
+            <label for="">Set left and right grid borders.</label>
+            <input type="checkbox" [(ngModel)]="grid_margin">
+          </div>
+
+          <div>
+            <label for="">Snap grid to sliders step (step param). If activated, grid_num will not be used.</label>
+            <input type="checkbox" [(ngModel)]="grid_snap">
+          </div>
+
+        </div>
+      </div>
+      <div *ngIf="type === 'double'">
+        <div><h2>Interval control</h2></div>
+        <div>
+          <div>
+            <label for="">Allow user to drag whole range.</label>
+            <input type="checkbox" [(ngModel)]="drag_interval">
+          </div>
+          <div>
+            <label for="">Set minimum diapason between sliders</label>
+            <input type="number" [(ngModel)]="min_interval">
+          </div>
+          <div>
+            <label for="">Set maximum diapason between sliders.</label>
+            <input type="number" [(ngModel)]="max_interval">
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div>
+      <div>
+        <div><h2>Handles control</h2></div>
+        <div>
+          <div>
+            <label for="">Fix position of left (or single) handle.</label>
+            <input type="checkbox" [(ngModel)]="from_fixed">
+          </div>
+          <div>
+            <label for="">Set the minimum limit for left handle</label>
+            <input type="number" [(ngModel)]="from_min">
+          </div>
+          <div>
+            <label for="">Set the maximum limit for left handle</label>
+            <input type="number" [(ngModel)]="from_max">
+          </div>
+          <div>
+            <label for="">Highlight the limits for left handle</label>
+            <input type="checkbox" [(ngModel)]="from_shadow">
+          </div>
+          <div>
+            <label for="">Fix position of right handle.</label>
+            <input type="checkbox" [(ngModel)]="to_fixed">
+          </div>
+
+          <div>
+            <label for="">/Set the minimum limit for right handle</label>
+            <input type="number" [(ngModel)]="to_min">
+          </div>
+          <div>
+            <label for="">Set the maximum limit for right handle</label>
+            <input type="number" [(ngModel)]="to_max">
+          </div>
+
+          <div>
+            <label for="">Highlight the limits for right handle</label>
+            <input type="checkbox" [(ngModel)]="to_shadow">
+          </div>
+        </div>
+
+
+
+
+      </div>
+      <div>
+        <div><h2>UI control</h2></div>
+        <div>
+          <div>
+            <label for="">Skin</label>
+            <select [(ngModel)]="skin">
+              <option [value]="'flat'">Flat</option>
+              <option [value]="'modern'">Modern</option>
+              <option [value]="'big'">Big</option>
+              <option [value]="'round'">Round</option>
+              <option [value]="'sharp'">Sharp</option>
+              <option [value]="'square'">Square</option>
+
+
+            </select>
+          </div>
+          <div>
+            <label for="">Hides min and max labels.</label>
+            <input type="checkbox" [(ngModel)]="hide_min_max">
+          </div>
+          <div>
+            <label for="">Hides from and to labels.</label>
+            <input type="checkbox" [(ngModel)]="hide_from_to">
+          </div>
+          <div>
+            <label for="">Slider will be always inside it's container.</label>
+            <input type="checkbox" [(ngModel)]="force_edges">
+          </div>
+        </div>
+
+        <!--
+
+  // @Input() extra_classes: string = ''; //Traverse extra CSS-classes to slider container
+  @Input() block: boolean = false; //Locks slider and makes it inactive (visually). input is NOT disabled. Can still be send with forms.-->
+      </div>
+    </div>
+
+<div>
+  <div><h2>Prettify numbers</h2></div>
+  <div>
+    <div>
+      <label for="">Enables prettify function.</label>
+      <input type="checkbox" [(ngModel)]="prettify_enabled">
+    </div>
+    <div>
+      <label for="">Set up your own separator for long numbers. 10 000, 10.000, 10-000 etc.</label>
+      <input type="text" [(ngModel)]="prettify_separator">
+    </div>
+
+    <div>
+      <label for="">Set prefix for values. Will be set up right before the number: $100</label>
+      <input type="text" [(ngModel)]="prefix">
+    </div>
+    <div>
+      <label for="">Set postfix for values. Will be set up right after the number: 100k</label>
+      <input type="text" [(ngModel)]="postfix">
+    </div>
+    <div>
+      <label for="">Special postfix, used only for maximum value. Will be showed after handle will reach maximum right position. For example 0 — 100+</label>
+      <input type="text" [(ngModel)]="max_postfix">
+    </div>
+    <div>
+      <label for="">Used for "double" type and only if prefix or postfix was set up. Determine how to decorate close values. For example: $10k — $100k or $10 — 100k</label>
+      <input type="checkbox" [(ngModel)]="decorate_both">
+    </div>
+    <div>
+      <label for="">Set your own separator for close values. Used for double type. Default: 10 — 100. Or you may set: 10 to 100, 10 + 100, 10 → 100 etc.</label>
+      <input type="text" [(ngModel)]="values_separator">
+    </div>
+  </div>
+</div>
+
+
+  </div>
+  <ngx-ion-range-slider [min]="min" [max]="max" [from]="from" [to]="to" [step]="step" [values]="values" [type]="type"
+                        [grid]="showGrid" [grid_num]="gridNum" [grid_margin]="grid_margin" [grid_snap]="grid_snap"
+
+
+                        [drag_interval]="drag_interval" [min_interval]="min_interval" [max_interval]="max_interval"
+
+                        [from_fixed]="from_fixed" [from_min]="from_min" [from_max]="from_max" [from_shadow]="from_shadow" [to_fixed]="to_fixed" [to_min]="to_min" [to_max]="to_max" [to_shadow]="to_shadow"
+                        [skin]="skin" [hide_from_to]="hide_from_to" [hide_min_max]="hide_min_max" [force_edges]="force_edges"
+                        [prettify_enabled]="prettify_enabled" [prettify_separator]="prettify_separator" [prefix]="prefix" [postfix]="postfix" [max_postfix]="max_postfix" [decorate_both]="decorate_both" [values_separator]="values_separator">
+  </ngx-ion-range-slider>
+
+  <span>Value result : {{min}} {{type}}</span>
+</div>

@@ -1,143 +1,157 @@
 <h1>Angular ION Range Slider</h1>
 
-<div style="width:100%;">
-  <ngx-ion-range-slider [min]="0" [max]="5000" [step]="1" [grid]="true" [grid_num]="5" [skin]="'flat'"
-    [type]="'double'">
-  </ngx-ion-range-slider>
-</div>
-<div style="display: flex">
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="50" [from]="25" [to]="45" [step]="5" [grid]="true"
-      [grid_num]="5" [grid_snap]="false" [grid_margin]="true" [block]="false" [prefix]="'€'" [postfix]="'$'"
-      [skin]="'modern'" [showDebugInfo]="false" [drag_interval]="false"></ngx-ion-range-slider>
-  </div>
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [min]="0" [max]="50" [step]="5" [grid]="true" [grid_num]="5" [grid_snap]="false"
-      [grid_margin]="true" [block]="false" [prefix]="'€'" [postfix]="'$'" [skin]="'flat'" [type]="'double'" [from]="25"
-      [to]="45" [showDebugInfo]="false" [drag_interval]="true"></ngx-ion-range-slider>
-  </div>
+<app-customize></app-customize>
 
-</div>
-<div style="display: flex;">
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'single'" [values]="['a', 'b', 'c', 'e', 'f']">
+<!--<div style="width:100%;">-->
+<!--  <ngx-ion-range-slider [min]="0" [max]="5000" [step]="1" [grid]="true" [grid_num]="5" [skin]="'flat'"-->
+<!--    [type]="'double'" (change)="onChange($event)">-->
+<!--  </ngx-ion-range-slider>-->
 
-    </ngx-ion-range-slider>
-  </div>
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [values]="arrayChars" [grid]="true" [drag_interval]="true" [from]="2"
-      [grid_snap]="true">
+<!--  <span>Value result : {{min}} &#45;&#45; {{max}}</span>-->
+<!--</div>-->
+<!--<div style="display: flex">-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="50" [from]="25" [to]="45" [step]="5" [grid]="true"-->
+<!--      [grid_num]="5" [grid_snap]="false" [grid_margin]="true" [block]="false" [prefix]="'€'" [postfix]="'$'"-->
+<!--      [skin]="'modern'" [showDebugInfo]="false" [drag_interval]="false" #firstelement></ngx-ion-range-slider>-->
 
-    </ngx-ion-range-slider>
-  </div>
-</div>
+<!--    <pre>-->
+<!--    {{firstelement.result.from_value}} - {{firstelement.result.to_value}}-->
+<!--      </pre>-->
+<!--    <pre>-->
+<!--    {{firstelement.result.from}} - {{firstelement.result.to}}-->
+<!--      </pre>-->
+<!--  </div>-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [min]="0" [max]="50" [step]="5" [grid]="true" [grid_num]="5" [grid_snap]="false"-->
+<!--      [grid_margin]="true" [block]="false" [prefix]="'€'" [postfix]="'$'" [skin]="'flat'" [type]="'double'" [from]="25"-->
+<!--      [to]="45" [showDebugInfo]="false" [drag_interval]="true"></ngx-ion-range-slider>-->
+<!--  </div>-->
 
-
-<div style="display: flex;">
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [min_interval]="5" [max_interval]="10" [to]="10" [drag_interval]="true">
+<!--</div>-->
+<!--<div style="display: flex;">-->
+<!--  <div style="width:50%; margin:5px;">-->
+    <ngx-ion-range-slider [type]="'single'" [values]="['a', 'b', 'c', 'e', 'f']" [grid]="true">
 
     </ngx-ion-range-slider>
-  </div>
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [from_fixed]="true" [from]="10" [to]="11" [grid_snap]="true" [min]="0"
-      [max]="50">
+<!--  </div>-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [values]="arrayChars" [grid]="true" [drag_interval]="true" [from]="2"-->
+<!--      [grid_snap]="true">-->
 
-    </ngx-ion-range-slider>
-  </div>
-</div>
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--</div>-->
 
-<div style="display: flex;">
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="0.1" [from]="20" [from_min]="5"
-      [from_max]="35" [to]="50" [to_min]="45" [to_max]="90" [drag_interval]="true" [from_shadow]="true"
-      [to_shadow]="true" [to_fixed]="true" [skin]="'modern'">
 
-    </ngx-ion-range-slider>
-  </div>
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="0.1" [from]="20" [from_min]="5"
-      [from_max]="35" [to]="50" [to_min]="45" [to_max]="90" [drag_interval]="true" [from_shadow]="true"
-      [to_shadow]="true" [hide_min_max]="true" [hide_from_to]="true" [skin]="'modern'">
+<!--<div style="display: flex;">-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [min_interval]="5" [max_interval]="10" [to]="10" [drag_interval]="true">-->
 
-    </ngx-ion-range-slider>
-  </div>
-</div>
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [from_fixed]="true" [from]="10" [to]="11" [grid_snap]="true" [min]="0"-->
+<!--      [max]="50">-->
 
-<div style="display: flex;">
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="0.1" [from]="20" [to]="50"
-      [drag_interval]="true" [from_shadow]="true" [to_shadow]="true" [force_edges]="true">
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--</div>-->
 
-    </ngx-ion-range-slider>
-  </div>
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="5000000" [step]="10000" [from]="20" [to]="700000"
-      [drag_interval]="true" [force_edges]="true" [prettify_enabled]="true" [prettify_separator]="'.'" [prefix]="'€'"
-      [postfix]="'k'" [max_postfix]="'+'" [values_separator]="' → '" [keyboard]="true" [grid]="true">
+<!--<div style="display: flex;">-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="0.1" [from]="20" [from_min]="5"-->
+<!--      [from_max]="35" [to]="50" [to_min]="45" [to_max]="90" [drag_interval]="true" [from_shadow]="true"-->
+<!--      [to_shadow]="true" [to_fixed]="true" [skin]="'modern'">-->
 
-    </ngx-ion-range-slider>
-  </div>
-</div>
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="0.1" [from]="20" [from_min]="5"-->
+<!--      [from_max]="35" [to]="50" [to_min]="45" [to_max]="90" [drag_interval]="true" [from_shadow]="true"-->
+<!--      [to_shadow]="true" [hide_min_max]="true" [hide_from_to]="true" [skin]="'modern'">-->
 
-<div style="display: flex;">
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="5000000" [step]="10000" [drag_interval]="true"
-      [force_edges]="true" [prettify_enabled]="true" [prettify_separator]="'.'" [prefix]="'€'" [postfix]="'k'"
-      [max_postfix]="'+'" [values_separator]="' → '" [keyboard]="true" [grid]="true" [grid_margin]="true"
-      [grid_num]="20" [grid_snap]="false" [step]="100000" [from]="200000" [to]="700000" [showDebugInfo]="false">
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--</div>-->
 
-    </ngx-ion-range-slider>
-  </div>
-  <div style="width:50%; margin:5px;">
+<!--<div style="display: flex;">-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="0.1" [from]="20" [to]="50"-->
+<!--      [drag_interval]="true" [from_shadow]="true" [to_shadow]="true" [force_edges]="true">-->
 
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="1" [from]="20" [to]="50"
-      [drag_interval]="true" [from_shadow]="true" [from_min]="10" [from_max]="30" [to_shadow]="true" [to_min]="40"
-      [to_max]="60" [force_edges]="true" [grid]="true">
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="5000000" [step]="10000" [from]="20" [to]="700000"-->
+<!--      [drag_interval]="true" [force_edges]="true" [prettify_enabled]="true" [prettify_separator]="'.'" [prefix]="'€'"-->
+<!--      [postfix]="'k'" [max_postfix]="'+'" [values_separator]="' → '" [keyboard]="true" [grid]="true">-->
 
-    </ngx-ion-range-slider>
-  </div>
-</div>
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--</div>-->
 
-<div style="display: flex;">
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="10" [step]="0.01" [drag_interval]="true"
-      [force_edges]="true" [prettify_enabled]="true" [prettify_separator]="'.'" [prefix]="'€'" [postfix]="'k'"
-      [max_postfix]="'+'" [values_separator]="' → '" [keyboard]="true" [grid]="true" [grid_margin]="true"
-      [grid_num]="10" [grid_snap]="false" [step]="1" [from]="3" [to]="5" [showDebugInfo]="false"
-      [skin]="'big'"
-      >
+<!--<div style="display: flex;">-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="5000000" [step]="10000" [drag_interval]="true"-->
+<!--      [force_edges]="true" [prettify_enabled]="true" [prettify_separator]="'.'" [prefix]="'€'" [postfix]="'k'"-->
+<!--      [max_postfix]="'+'" [values_separator]="' → '" [keyboard]="true" [grid]="true" [grid_margin]="true"-->
+<!--      [grid_num]="20" [grid_snap]="false" [step]="100000" [from]="200000" [to]="700000" [showDebugInfo]="false">-->
 
-    </ngx-ion-range-slider>
-  </div>
-  <div style="width:50%; margin:5px;">
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--  <div style="width:50%; margin:5px;">-->
 
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="1" [from]="20" [to]="50"
-      [drag_interval]="true" [from_shadow]="true" [from_min]="10" [from_max]="30" [to_shadow]="true" [to_min]="40"
-      [to_max]="60" [force_edges]="true" [grid]="true"
-      [skin]="'round'">
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="1" [from]="20" [to]="50"-->
+<!--      [drag_interval]="true" [from_shadow]="true" [from_min]="10" [from_max]="30" [to_shadow]="true" [to_min]="40"-->
+<!--      [to_max]="60" [force_edges]="true" [grid]="true">-->
 
-    </ngx-ion-range-slider>
-  </div>
-</div>
-<div style="display: flex;">
-  <div style="width:50%; margin:5px;">
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="10" [step]="0.01" [drag_interval]="true"
-      [force_edges]="true" [prettify_enabled]="true" [prettify_separator]="'.'" [prefix]="'€'" [postfix]="'k'"
-      [max_postfix]="'+'" [values_separator]="' → '" [keyboard]="true" [grid]="true" [grid_margin]="true"
-      [grid_num]="10" [grid_snap]="false" [step]="1" [from]="3" [to]="5" [showDebugInfo]="false"
-      [skin]="'sharp'"
-      >
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--</div>-->
 
-    </ngx-ion-range-slider>
-  </div>
-  <div style="width:50%; margin:5px;">
+<!--<div style="display: flex;">-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="10" [step]="0.01" [drag_interval]="true"-->
+<!--      [force_edges]="true" [prettify_enabled]="true" [prettify_separator]="'.'" [prefix]="'€'" [postfix]="'k'"-->
+<!--      [max_postfix]="'+'" [values_separator]="' → '" [keyboard]="true" [grid]="true" [grid_margin]="true"-->
+<!--      [grid_num]="10" [grid_snap]="false" [step]="1" [from]="3" [to]="5" [showDebugInfo]="false"-->
+<!--      [skin]="'big'"-->
+<!--      >-->
 
-    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="1" [from]="20" [to]="50"
-      [drag_interval]="true" [from_shadow]="true" [from_min]="10" [from_max]="30" [to_shadow]="true" [to_min]="40"
-      [to_max]="60" [force_edges]="true" [grid]="true"
-      [skin]="'square'">
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--  <div style="width:50%; margin:5px;">-->
 
-    </ngx-ion-range-slider>
-  </div>
-</div>
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="1" [from]="20" [to]="50"-->
+<!--      [drag_interval]="true" [from_shadow]="true" [from_min]="10" [from_max]="30" [to_shadow]="true" [to_min]="40"-->
+<!--      [to_max]="60" [force_edges]="true" [grid]="true"-->
+<!--      [skin]="'round'">-->
+
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--</div>-->
+<!--<div style="display: flex;">-->
+<!--  <div style="width:50%; margin:5px;">-->
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="10" [step]="0.01" [drag_interval]="true"-->
+<!--      [force_edges]="true" [prettify_enabled]="true" [prettify_separator]="'.'" [prefix]="'€'" [postfix]="'k'"-->
+<!--      [max_postfix]="'+'" [values_separator]="' → '" [keyboard]="true" [grid]="true" [grid_margin]="true"-->
+<!--      [grid_num]="10" [grid_snap]="false" [step]="1" [from]="3" [to]="5" [showDebugInfo]="false"-->
+<!--      [skin]="'sharp'"-->
+<!--      >-->
+
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--  <div style="width:50%; margin:5px;">-->
+
+<!--    <ngx-ion-range-slider [type]="'double'" [min]="0" [max]="100" [step]="1" [from]="20" [to]="50"-->
+<!--      [drag_interval]="true" [from_shadow]="true" [from_min]="10" [from_max]="30" [to_shadow]="true" [to_min]="40"-->
+<!--      [to_max]="60" [force_edges]="true" [grid]="true"-->
+<!--      [skin]="'square'">-->
+
+<!--    </ngx-ion-range-slider>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+

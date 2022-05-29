@@ -3,11 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxIonRangeSliderModule } from '@local/ngx-ion-range-slider';
 import { AppComponent } from './app.component';
+import { CustomizeComponent } from './customize/customize.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CustomizeComponent
 
   ],
   imports: [
