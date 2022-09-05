@@ -159,6 +159,5 @@
         }
       }
     }
-  },
-  "defaultProject": "ngx-ion-range-slider-demo-app"
+  }
 }
