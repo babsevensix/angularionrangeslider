@@ -1,0 +1,51 @@
+input[type=text],[type=number]{
+@apply mt-1 block w-full rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0;
+}
+
+
+input[type=checkbox]{
+    @apply rounded bg-gray-300 border-transparent focus:border-transparent focus:bg-gray-400 text-gray-400 focus:ring-1 focus:ring-offset-2 focus:ring-gray-500;
+                        
+}
+
+select{
+  @apply block w-full mt-1 rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0;
+                  
+}
+
+h3{
+  @apply text-xl font-bold text-gray-700 my-3;
+}
+
+label{
+  @apply block text-sm font-medium text-gray-700;
+}
+
+.card{
+  @apply flex justify-center w-full;
+  >div{
+    @apply block p-6 rounded-lg shadow-lg bg-white w-full;
+
+    h5{
+      @apply text-gray-900 text-xl leading-tight font-medium mb-2;
+    }
+
+    .body{
+      @apply flex flex-col;
+    }
+
+  }
+}
+
+
+.btn{
+  @apply inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out;
+}
+
+
+.form-check{
+  @apply flex flex-row items-center my-3;
+  label{
+    @apply mx-2;
+  }
+}
