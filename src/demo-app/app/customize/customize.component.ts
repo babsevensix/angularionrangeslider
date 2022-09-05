@@ -68,4 +68,16 @@ export class CustomizeComponent implements OnInit {
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     this.postfix = '';
   }
+
+  onChange(change: number | { min: number, max: number }): void{
+
+  }
+
+  onchangeFinish(change: number | { min: number, max: number }): void {
+
+  }
 }
+
+// export interface ngxChange{
+//   number | { min: number, max: number }
+// }

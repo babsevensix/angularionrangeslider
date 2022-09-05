@@ -107,7 +107,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
 
 
   @Output() change = new EventEmitter<number | { min: number, max: number }>();
-
+  @Output() changeFinish = new EventEmitter<number | { min: number, max: number }>();
 
   calc_count = 0;
   update_tm = 0;
@@ -236,7 +236,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
 
     this.validate();
     this.update();
-    console.log('ngOnChanges', changes);
+    
     if (!changes.min?.firstChange || !changes.max?.firstChange || !changes.step?.firstChange) {
       this.update();
     }
@@ -523,7 +523,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
 
     let x = e.pageX; // || e.originalEvent.touches && e.originalEvent.touches[0].pageX;
     this.coords.x_pointer = x - this.coords.x_gap;
-    console.log('pointerMove', this.coords.x_pointer);
+    // console.log('pointerMove', this.coords.x_pointer);
     this.calc();
 
     this.drawHandles();
@@ -610,10 +610,10 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     this.updateScene();
     this.restoreOriginalMinInterval();
     //
-    // // callbacks call
-    // if ($.contains(this.$cache.cont[0], e.target) || this.dragging) {
-    //   this.callOnFinish();
-    // }
+    // callbacks call
+    if (this.dragging){//if ($.contains(this.$cache.cont[0], e.target) || this.dragging) {
+      this.callOnFinish();
+    }
     //
     this.dragging = false;
   }
@@ -653,7 +653,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     if (this.calc_count === 10 || update) {
       this.calc_count = 0;
       this.coords.w_rs = this.outerWidth(this.cache_rs);
-      console.log('recalculated w_rs', this.coords.w_rs);
       this.calcHandlePercent();
     }
 
@@ -992,7 +991,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       );
 
       this.labels.w_single = this.outerWidth(this.cache_single); //   this.labels.w_single = this.$cache.single.outerWidth(false);
-      console.log('calculated w_single', this.labels.w_single);
+      
       this.labels.p_single_fake =
         (this.labels.w_single / this.coords.w_rs) * 100;
       this.labels.p_single_left =
@@ -1206,7 +1205,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       let single_left = this.labels.p_single_left + this.labels.p_single_fake;
       let to_left = this.labels.p_to_left + this.labels.p_to_fake;
       let max = Math.max(single_left, to_left);
-      //console.log(this.labels.p_from_left, this.labels.p_from_fake,this.labels.p_from_left+ this.labels.p_from_fake, this.labels.p_to_left );
+      
       if (
         this.labels.p_from_left + this.labels.p_from_fake >=
         this.labels.p_to_left
@@ -1263,7 +1262,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
    * Draw handles
    */
   drawHandles() {
-    //console.log('drawHandles');
+    
     this.coords.w_rs = this.outerWidth(this.cache_rs); //this.$cache.rs.outerWidth(false);
 
     if (!this.coords.w_rs) {
@@ -1300,14 +1299,14 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       console.log('exit 945');
       return;
     }
-    //console.log("this.old_from !== this.result.from", this.old_from !== this.result.from,'this.old_to !== this.result.to', this.old_to !== this.result.to,'this.force_redraw', this.force_redraw,'this.is_key', this.is_key);
+    
     if (
       this.old_from !== this.result.from ||
       this.old_to !== this.result.to ||
       this.force_redraw ||
       this.is_key
     ) {
-      // console.log('drawHandles -  before draw labels');
+      
       this.drawLabels();
       //
       this.cache.bar.style.left = this.coords.p_bar_x + '%';
@@ -1382,18 +1381,18 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     if (this.type === 'single') {
 
       if (this.values.length) {
-        this.change.emit(this.result.from_value);//this.$cache.input.prop("value", this.result.from_value);
+        this.change.emit(this.result.from_value ?? 0);//this.$cache.input.prop("value", this.result.from_value);
       } else {
-        this.change.emit(this.result.from);//this.$cache.input.prop("value", this.result.from);
+        this.change.emit(this.result.from ?? 0);//this.$cache.input.prop("value", this.result.from);
       }
       //this.$cache.input.data("from", this.result.from);
     } else {
 
       if (this.values.length) {
-        this.change.emit({min: this.result.from_value, max: this.result.to_value});//this.$cache.input.prop("value", this.result.from_value + this.options.input_values_separator + this.result.to_value);
+        this.change.emit({min: this.result.from_value ?? 0, max: this.result.to_value ?? 0});//this.$cache.input.prop("value", this.result.from_value + this.options.input_values_separator + this.result.to_value);
 
       } else {
-        this.change.emit({min: this.result.from, max: this.result.to});//this.$cache.input.prop("value", this.result.from + this.options.input_values_separator + this.result.to);
+        this.change.emit({min: this.result.from ?? 0, max: this.result.to ?? 0});//this.$cache.input.prop("value", this.result.from + this.options.input_values_separator + this.result.to);
       }
       // this.$cache.input.data("from", this.result.from);
       // this.$cache.input.data("to", this.result.to);
@@ -1450,7 +1449,9 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     this.coords.big_w = [];
     this.coords.big_p = [];
     this.coords.big_x = [];
-
+    // if (this.raf_id != null) {
+    //   cancelAnimationFrame(this.raf_id);
+    // }
     cancelAnimationFrame(this.raf_id);
   }
 
@@ -1462,7 +1463,20 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   }
 
   updateFrom(): void {
-    this.result.from = this.from;
+    //this.result.from = this.from;
+    
+
+    if (this.result.from) {
+      this.result.from_percent = this.convertToPercent(this.result.from);
+      this.result.from_pretty = this._prettify(this.result.from);
+      if (this.values) {
+        this.result.from_value = this.values[this.result.from];
+      }
+    }
+
+    
+
+
     this.result.from_percent = this.convertToPercent(this.result.from);
     this.result.from_pretty = this._prettify(this.result.from);
     if (this.values) {
@@ -1471,7 +1485,19 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   }
 
   updateTo(): void {
-    this.result.to = this.to;
+    //this.result.to = this.to;
+
+
+    if (this.result.to) {
+      this.result.to_percent = this.convertToPercent(this.result.to);
+      this.result.to_pretty = this._prettify(this.result.to);
+      if (this.values && this.values !== null && this.values.length > 0) {
+        this.result.to_value = this.values[this.result.to];
+      }
+    }
+
+
+
     this.result.to_percent = this.convertToPercent(this.result.to);
     this.result.to_pretty = this._prettify(this.result.to);
     if (this.values) {
@@ -1519,6 +1545,32 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
 //       this.options.onFinish(this.result);
 //     }
 //   }
+
+
+
+
+    this.writeToInput();
+
+    if (this.type === 'single') {
+
+      if (this.values.length) {
+        this.changeFinish.emit(this.result.from_value ?? 0);//this.$cache.input.prop("value", this.result.from_value);
+      } else {
+        this.changeFinish.emit(this.result.from ?? 0);//this.$cache.input.prop("value", this.result.from);
+      }
+      //this.$cache.input.data("from", this.result.from);
+    } else {
+
+      if (this.values.length) {
+        this.changeFinish.emit({min: this.result.from_value ?? 0, max: this.result.to_value ?? 0});//this.$cache.input.prop("value", this.result.from_value + this.options.input_values_separator + this.result.to_value);
+
+      } else {
+        this.changeFinish.emit({min: this.result.from ?? 0, max: this.result.to ?? 0});//this.$cache.input.prop("value", this.result.from + this.options.input_values_separator + this.result.to);
+      }
+    }
+
+
+
   }
 
   callOnUpdate() {
@@ -1538,7 +1590,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
    * to update everything
    */
   updateScene() {
-    console.log('updateScene');
+    
     if (this.raf_id) {
       //   cancelAnimationFrame(this.raf_id);
       this.raf_id = null;
