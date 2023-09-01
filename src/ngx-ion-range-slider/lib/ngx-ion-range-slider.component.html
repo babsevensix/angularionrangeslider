@@ -4,8 +4,7 @@
 }">
   <span class="irs" #cache_rs>
     <span #cache_line class="irs-line" tabindex="0" (mousedown)="pointerClick('click',$event)"
-            (focus)="pointerFocus($event)"
-            (keydown)="keyboard? keyDown( $event): undefined " ></span>
+      (focus)="pointerFocus($event)" (keydown)="keyboard? keyDown( $event): undefined "></span>
     <span #cache_min class="irs-min" *ngIf="cache.min.isVisible">{{cache.min.html}}</span>
     <span #cache_max class="irs-max" *ngIf="cache.max.isVisible">{{cache.max.html}}</span>
     <span #cache_from class="irs-from" *ngIf="cache.from.isVisible"
@@ -34,15 +33,15 @@
               left: v.left,
               marginLeft: v.marginLeft,
               visibility: v.visibility
-            }" >{{v.label}}</span>
+            }">{{v.label}}</span>
     </ng-container>
 
   </span>
 
   <ng-container *ngIf="type === 'single'">
     <span #cache_bar class="irs-bar irs-bar--single" *ngIf="cache.bar.isVisible" [ngStyle]="cache.bar.style"></span>
-    <span class="irs-shadow shadow-single" *ngIf="cache.shad_single.isVisible" (mousedown)="pointerClick('click', $event)"
-      [ngStyle]="cache.shad_single.style"></span>
+    <span class="irs-shadow shadow-single" *ngIf="cache.shad_single.isVisible"
+      (mousedown)="pointerClick('click', $event)" [ngStyle]="cache.shad_single.style"></span>
     <span #cache_s_single class="irs-handle single" (mousedown)="pointerDown('single', $event)"
       [ngStyle]="cache.s_single.style"><i></i><i></i><i></i></span>
   </ng-container>
@@ -54,8 +53,10 @@
               left:  coords.p_bar_x+'%',
               width: coords.p_bar_w+'%'
           }" (mousedown)="drag_interval ? pointerDown('both', $event) : pointerClick('click', $event)"></span>
-    <span class="irs-shadow shadow-from" *ngIf="cache.shad_from.isVisible" [ngStyle]="cache.shad_from.style" (mousedown)="pointerClick('click', $event)"></span>
-    <span class="irs-shadow shadow-to" *ngIf="cache.shad_to.isVisible" [ngStyle]="cache.shad_to.style" (mousedown)="pointerClick('click', $event)"></span>
+    <span class="irs-shadow shadow-from" *ngIf="cache.shad_from.isVisible" [ngStyle]="cache.shad_from.style"
+      (mousedown)="pointerClick('click', $event)"></span>
+    <span class="irs-shadow shadow-to" *ngIf="cache.shad_to.isVisible" [ngStyle]="cache.shad_to.style"
+      (mousedown)="pointerClick('click', $event)"></span>
     <span #cache_s_from class="irs-handle from" (mousedown)="pointerDown('from', $event)"
       [ngStyle]="cache.s_from.style"><i></i><i></i><i></i></span>
     <span #cache_s_to class="irs-handle to" (mousedown)="pointerDown('to', $event)"
@@ -70,40 +71,46 @@
 </span>
 <!--irs-disabled-->
 
-<pre *ngIf="showDebugInfo">
 
-  this.coords.big_w:{{coords.big_w | json}}
-  bigGridSnap: {{bigGridSnap | json}}
-  target:{{target}}
-  coords.p_bar_x:{{coords.p_bar_x}}
-  coords.p_bar_w:{{coords.p_bar_w}}
-  cache.from.style.left:<input type="text" [value]="cache.from.style.left" />
-  cache.from.style.width:{{cache.from.style.width}}
+<div style="display: grid; grid-template-columns: 1fr 1fr;" *ngIf="showDebugInfo">
+  <pre style="font-size: smaller;">
+    this.coords.big_w:{{coords.big_w | json}}
+    <!-- bigGridSnap: {{bigGridSnap | json}} -->
+  </pre>
+  <pre style="font-size: smaller;">
 
-  <!-- coords.x_pointer:{{coords.x_pointer}}
-  coords.x_gap:{{coords.x_gap}}
-  coords.p_gap_left:{{coords.p_gap_left}}
-  coords.p_gap_right:{{coords.p_gap_right}}
-  coords.p_from_fake:{{coords.p_from_fake}}
-  coords.p_to_fake:{{coords.p_to_fake}}
-  coords.p_pointer:{{coords.p_pointer}} -->
-  <!-- cache_to: {{cache.to | json}}
-  w_to: {{labels.w_to}}
-  p_to_left: {{labels.p_to_left}}
-  p_to_fake: {{labels.p_to_fake}}
-  ionRangeSlider_w :{{ionRangeSlider.offsetWidth}}
-  dragging:{{dragging}}
-  from: {{from}} - to: {{to}}<br>
-  force_redraw: {{force_redraw}}<br>
-  old_from: {{old_from}} - result.from {{result.from}}<br>
-  old_to: {{old_to}} - result.to {{result.to}}<br>
-  is_key: {{is_key}}<br>
-  coords.x_gap{{coords.x_gap}} -->
-<!--  {{cache.single | json}}<br>-->
-<!--  {{cache.s_single | json}}<br>-->
-  {{labels | json}}<br>
-  coords.x_pointer{{coords.x_pointer}}
-  coords.w_rs {{coords.w_rs}}
-<!--  {{result | json}}<br>-->
-<!--  {{coords | json}}-->
-</pre>
+
+    target:{{target}}
+    coords.p_bar_x:{{coords.p_bar_x}}
+    coords.p_bar_w:{{coords.p_bar_w}}
+    cache.from.style.left:<input type="text" [value]="cache.from.style.left" />
+    cache.from.style.width:{{cache.from.style.width}}
+
+    <!-- coords.x_pointer:{{coords.x_pointer}}
+    coords.x_gap:{{coords.x_gap}}
+    coords.p_gap_left:{{coords.p_gap_left}}
+    coords.p_gap_right:{{coords.p_gap_right}}
+    coords.p_from_fake:{{coords.p_from_fake}}
+    coords.p_to_fake:{{coords.p_to_fake}}
+    coords.p_pointer:{{coords.p_pointer}} -->
+    <!-- cache_to: {{cache.to | json}}
+    w_to: {{labels.w_to}}
+    p_to_left: {{labels.p_to_left}}
+    p_to_fake: {{labels.p_to_fake}}
+    ionRangeSlider_w :{{ionRangeSlider.offsetWidth}}
+    dragging:{{dragging}}
+    from: {{from}} - to: {{to}}<br>
+    force_redraw: {{force_redraw}}<br>
+    old_from: {{old_from}} - result.from {{result.from}}<br>
+    old_to: {{old_to}} - result.to {{result.to}}<br>
+    is_key: {{is_key}}<br>
+    coords.x_gap{{coords.x_gap}} -->
+  <!--  {{cache.single | json}}<br>-->
+  <!--  {{cache.s_single | json}}<br>-->
+    {{labels | json}}<br>
+    coords.x_pointer{{coords.x_pointer}}
+    coords.w_rs {{coords.w_rs}}
+  <!--  {{result | json}}<br>-->
+  <!--  {{coords | json}}-->
+  </pre>
+</div>

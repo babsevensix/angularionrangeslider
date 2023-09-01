@@ -47,6 +47,7 @@ export class CustomizeComponent implements OnInit {
   decorate_both: boolean;
   values_separator: string = ' - ';
 
+  valueResult: number = 0;
 
   constructor() { }
 
@@ -70,10 +71,15 @@ export class CustomizeComponent implements OnInit {
   }
 
   onChange(change: number | { min: number, max: number }): void{
-
+    if (typeof change === 'number') {
+      this.valueResult = change;
+    }
   }
 
   onchangeFinish(change: number | { min: number, max: number }): void {
+    if (typeof change === 'number'){
+      this.valueResult = change;
+    }
 
   }
 }

@@ -50,7 +50,9 @@
             [hide_from_to]="hide_from_to" [hide_min_max]="hide_min_max" [force_edges]="force_edges"
             [prettify_enabled]="prettify_enabled" [prettify_separator]="prettify_separator" [prefix]="prefix"
             [postfix]="postfix" [max_postfix]="max_postfix" [decorate_both]="decorate_both"
-            [values_separator]="values_separator" (change)="onChange($event)" (changeFinish)="onchangeFinish($event)">
+            [values_separator]="values_separator" (change)="onChange($event)" (changeFinish)="onchangeFinish($event)"
+
+            >
           </ngx-ion-range-slider>
         </div>
       </div>
@@ -216,7 +218,7 @@
         </div>
       </div>
       <!--
-    
+
       // @Input() extra_classes: string = ''; //Traverse extra CSS-classes to slider container
       @Input() block: boolean = false; //Locks slider and makes it inactive (visually). input is NOT disabled. Can still be send with forms.-->
     </div>
@@ -266,5 +268,5 @@
 
 
 
-    <span>Value result : {{min}} {{type}}</span>
+    <span>Value result : {{valueResult}} </span>
   </div>

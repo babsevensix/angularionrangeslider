@@ -1,3 +1,4 @@
+import { CommonModule, JsonPipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -8,13 +9,15 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import {Cache} from './Cache';
-import {gridsnap} from './gridsnap';
+import { Cache } from './Cache';
+import { gridsnap } from './gridsnap';
 
 @Component({
   selector: 'ngx-ion-range-slider',
   templateUrl: './ngx-ion-range-slider.component.html',
   styleUrls: ['./ngx-ion-range-slider.component.scss'],
+  standalone: true,
+  imports: [ CommonModule, JsonPipe ]
 })
 export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChanges {
   // @ViewChild('ionRangeSlider', {static: true}) ionRangeSlider!: ElementRef;
@@ -236,7 +239,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
 
     this.validate();
     this.update();
-    
+
     if (!changes.min?.firstChange || !changes.max?.firstChange || !changes.step?.firstChange) {
       this.update();
     }
@@ -991,7 +994,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       );
 
       this.labels.w_single = this.outerWidth(this.cache_single); //   this.labels.w_single = this.$cache.single.outerWidth(false);
-      
+
       this.labels.p_single_fake =
         (this.labels.w_single / this.coords.w_rs) * 100;
       this.labels.p_single_left =
@@ -1205,7 +1208,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       let single_left = this.labels.p_single_left + this.labels.p_single_fake;
       let to_left = this.labels.p_to_left + this.labels.p_to_fake;
       let max = Math.max(single_left, to_left);
-      
+
       if (
         this.labels.p_from_left + this.labels.p_from_fake >=
         this.labels.p_to_left
@@ -1262,7 +1265,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
    * Draw handles
    */
   drawHandles() {
-    
+
     this.coords.w_rs = this.outerWidth(this.cache_rs); //this.$cache.rs.outerWidth(false);
 
     if (!this.coords.w_rs) {
@@ -1299,14 +1302,14 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       console.log('exit 945');
       return;
     }
-    
+
     if (
       this.old_from !== this.result.from ||
       this.old_to !== this.result.to ||
       this.force_redraw ||
       this.is_key
     ) {
-      
+
       this.drawLabels();
       //
       this.cache.bar.style.left = this.coords.p_bar_x + '%';
@@ -1464,7 +1467,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
 
   updateFrom(): void {
     //this.result.from = this.from;
-    
+
 
     if (this.result.from) {
       this.result.from_percent = this.convertToPercent(this.result.from);
@@ -1474,7 +1477,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       }
     }
 
-    
+
 
 
     this.result.from_percent = this.convertToPercent(this.result.from);
@@ -1590,7 +1593,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
    * to update everything
    */
   updateScene() {
-    
+
     if (this.raf_id) {
       //   cancelAnimationFrame(this.raf_id);
       this.raf_id = null;
