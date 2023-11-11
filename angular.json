@@ -21,7 +21,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "outputPath": "dist/demo-app",
             "index": "src/demo-app/index.html",
@@ -79,14 +79,14 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ngx-ion-range-slider-demo-app:build"
+            "buildTarget": "ngx-ion-range-slider-demo-app:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "ngx-ion-range-slider-demo-app:build:production"
+              "buildTarget": "ngx-ion-range-slider-demo-app:build:production"
             },
             "development": {
-              "browserTarget": "ngx-ion-range-slider-demo-app:build:development"
+              "buildTarget": "ngx-ion-range-slider-demo-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -95,7 +95,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ngx-ion-range-slider-demo-app:build"
+            "buildTarget": "ngx-ion-range-slider-demo-app:build"
           }
         },
         "test": {
