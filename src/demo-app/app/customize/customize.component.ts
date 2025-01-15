@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-customize',
   templateUrl: './customize.component.html',
-  styleUrls: ['./customize.component.scss']
+  styleUrls: ['./customize.component.scss'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class CustomizeComponent implements OnInit {
-  min:number = 0;
+  min: number = 0;
   max: number = 100;
   from: number = 0;
   to: number = 80;
 
-
   step: number = 1;
-  values:any[] =[];
-
-
+  values: any[] = [];
 
   type: 'double' | 'single' = 'single';
-  gridNum: number=10;
+  gridNum: number = 10;
   showGrid: boolean = true;
   skin: string = 'flat';
 
@@ -54,9 +54,8 @@ export class CustomizeComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
   onAddValue() {
-    this.values = [...this.values, this.newValueValues ];
+    this.values = [...this.values, this.newValueValues];
     this.newValueValues = '';
   }
 
@@ -70,20 +69,15 @@ export class CustomizeComponent implements OnInit {
     this.postfix = '';
   }
 
-  onChange(change: number | { min: number, max: number }): void{
+  onChange(change: number | { min: number, max: number }): void {
     if (typeof change === 'number') {
       this.valueResult = change;
     }
   }
 
   onchangeFinish(change: number | { min: number, max: number }): void {
-    if (typeof change === 'number'){
+    if (typeof change === 'number') {
       this.valueResult = change;
     }
-
   }
 }
-
-// export interface ngxChange{
-//   number | { min: number, max: number }
-// }
