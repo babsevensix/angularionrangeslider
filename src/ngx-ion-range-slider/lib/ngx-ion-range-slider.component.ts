@@ -3,9 +3,11 @@ import {
   AfterViewInit,
   Component,
   ElementRef, EventEmitter, HostListener,
+  input,
   Input,
   OnChanges,
-  OnInit, Output,
+  OnInit, output, Output,
+  signal,
   SimpleChanges,
   ViewChild,
   viewChild
@@ -13,21 +15,29 @@ import {
 import { Cache } from './Cache';
 import { gridsnap } from './gridsnap';
 
+type TargetType = 'base'|'from' | 'to' | 'single' | 'both' | 'both_one' | 'click' ;
+
 @Component({
-    selector: 'ngx-ion-range-slider',
-    templateUrl: './ngx-ion-range-slider.component.html',
-    styleUrls: ['./ngx-ion-range-slider.component.scss'],
-    imports: [CommonModule, JsonPipe]
+  selector: 'ngx-ion-range-slider',
+  templateUrl: './ngx-ion-range-slider.component.html',
+  styleUrls: ['./ngx-ion-range-slider.component.scss'],
+  imports: [CommonModule, JsonPipe],
 })
-export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChanges {
-  // @ViewChild('ionRangeSlider', {static: true}) ionRangeSlider!: ElementRef;
+export class NgxIonRangeSliderComponent
+  implements OnInit, AfterViewInit, OnChanges
+{
   //
   // @ViewChild('.irs-single', {static: false})
   // irsSingle: HTMLSpanElement | undefined;
   //@ViewChild('cache_rs') cache_rs: ElementRef<HTMLSpanElement> | undefined; //$cache.rs
   cache_rs = viewChild<ElementRef<HTMLSpanElement> | undefined>('cache_rs');
-  @ViewChild('cache_single') cache_single: ElementRef<HTMLSpanElement> | undefined; //$cache.single
-  @ViewChild('cache_s_single') cache_s_single: ElementRef<HTMLSpanElement> | undefined; //$cache.single
+  cache_single = viewChild<ElementRef<HTMLSpanElement> | undefined>(
+    'cache_single'
+  );
+  cache_s_single = viewChild<ElementRef<HTMLSpanElement> | undefined>(
+    'cache_s_single'
+  );
+
   // @ViewChild('cache_bar') cache_bar: ElementRef<HTMLSpanElement> | undefined; //$cache.bar
   @ViewChild('cache_from') cache_from: ElementRef<HTMLSpanElement> | undefined; //$cache.from
   @ViewChild('cache_to') cache_to: ElementRef<HTMLSpanElement> | undefined; //$cache.to
@@ -35,14 +45,15 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   @ViewChild('cache_max') cache_max: ElementRef<HTMLSpanElement> | undefined; //$cache.max
   //
   // // @ViewChild('cache_bar') cache_bar: ElementRef<HTMLSpanElement> | undefined; //$cache.max
-  @ViewChild('cache_s_from') cache_s_from: ElementRef<HTMLSpanElement> | undefined; //$cache.s_from
-  @ViewChild('cache_s_to') cache_s_to: ElementRef<HTMLSpanElement> | undefined; //$cache.s_to
+  cache_s_from = viewChild<ElementRef<HTMLSpanElement> | undefined>(
+    'cache_s_from'
+  ); //$cache.s_from
+  cache_s_to = viewChild<ElementRef<HTMLSpanElement> | undefined>('cache_s_to'); //$cache.s_to
   // @ViewChild('cache_line') cache_line: ElementRef<HTMLSpanElement> | undefined;
-  @ViewChild('cache_grid') cache_grid: ElementRef<HTMLSpanElement> | undefined;
-
+  cache_grid = viewChild<ElementRef<HTMLSpanElement> | undefined>('cache_grid'); //$cache.grid
 
   //Basic setup
-  @Input() type: 'double' | 'single' = 'single';
+  type = input<'double' | 'single'>('single');
   @Input() min: number = 0; //Slider minimum value
   @Input() max: number = 100; //Slider maximum value
   @Input() from: number | null = null; //start position for left handle (or for single handle)
@@ -55,7 +66,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   @Input() keyboard: boolean = true; //Activates keyboard controls. Move left: ←, ↓, A, S. Move right: →, ↑, W, D.
 
   //Grid Setup
-  @Input() grid: boolean = false; //Enables grid of values.
+  grid = input<boolean>(false); //Enables grid of values.
   @Input() grid_margin: boolean = true; //Set left and right grid borders.
   @Input() grid_num: number = 4; //Number of grid units.
   @Input() grid_snap: boolean = false; //Snap grid to sliders step (step param). If activated, grid_num will not be used.
@@ -73,7 +84,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   @Input() to_fixed: boolean = false; //Fix position of right handle.
   @Input() to_min: number | null = null; //Set the minimum limit for right handle
   @Input() to_max: number | null = null; //Set the maximum limit for right handle
-  @Input() to_shadow: boolean = false; //Highlight the limits for right handle
+  to_shadow = input<boolean>(false); //Highlight the limits for right handle
 
   //UI control
   @Input() skin: string = 'flat';
@@ -81,10 +92,10 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   @Input() hide_from_to: boolean = false; //Hides from and to labels.
   @Input() force_edges: boolean = false; //Slider will be always inside it's container.
   // @Input() extra_classes: string = ''; //Traverse extra CSS-classes to slider container
-  @Input() block: boolean = false; //Locks slider and makes it inactive (visually). input is NOT disabled. Can still be send with forms.
+  block = input<boolean>(false); //Locks slider and makes it inactive (visually). input is NOT disabled. Can still be send with forms.
 
   //Prettify numbers
-  @Input() prettify_enabled: boolean = true; //Enables prettify function.
+  prettify_enabled = input<boolean>(true); //Enables prettify function.
   @Input() prettify_separator: string = ' '; //Set up your own separator for long numbers. 10 000, 10.000, 10-000 etc.
   //prettify
   @Input() prefix: string | undefined = undefined; //Set prefix for values. Will be set up right before the number: $100
@@ -97,21 +108,62 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   // @Input() input_values_separator: string = ';'; //Separator for double values in input value property. Default FROM;TO. Only for double type
   // @Input() disable: boolean = false; //Locks slider and makes it inactive. input is disabled too. Invisible to forms.
 
-  @Input() showDebugInfo: boolean = false;
+  showDebugInfo = input<boolean>(false);
 
+  /**
+   * Mousemove or touchmove
+   * only for handlers
+   *
+   * @param e {Object} event object
+   */
   @HostListener('document:mousemove', ['$event'])
   mouseMoveOutside(event: MouseEvent) {
-    this.pointerMove(event);
+    if (!this.dragging) {
+      return;
+    }
+
+    let x = event.pageX; // || e.originalEvent.touches && e.originalEvent.touches[0].pageX;
+    this.coords.x_pointer = x - this.coords.x_gap;
+    // console.log('pointerMove', this.coords.x_pointer);
+    this.calc();
+
+    this.drawHandles();
   }
 
+  /**
+   * Mouseup or touchend
+   * only for handlers
+   *
+   * @param e {Object} event object
+   */
   @HostListener('window:mouseup', ['$event'])
   mouseUp(event: MouseEvent) {
-    this.pointerUp(event);
+    if (this.is_active) {
+      this.is_active = false;
+    } else {
+      return;
+    }
+
+    this.cache_s_single()?.nativeElement.classList.remove('state_hover');
+    this.cache_s_from()?.nativeElement.classList.remove('state_hover');
+    this.cache_s_to()?.nativeElement.classList.remove('state_hover');
+    //
+    this.force_redraw = true;
+
+    this.updateScene();
+    this.restoreOriginalMinInterval();
+    //
+    // callbacks call
+    if (this.dragging) {
+      //if ($.contains(this.$cache.cont[0], e.target) || this.dragging) {
+      this.callOnFinish();
+    }
+    //
+    this.dragging = false;
   }
 
-
-  @Output() change = new EventEmitter<number | { min: number, max: number }>();
-  @Output() changeFinish = new EventEmitter<number | { min: number, max: number }>();
+  change = output<number | { min: number; max: number }>();
+  changeFinish = output<number | { min: number; max: number }>();
 
   calc_count = 0;
   update_tm = 0;
@@ -130,7 +182,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   is_active = false;
   is_resize = false;
   is_click = false;
-  target: string | null = 'base';
+  target: TargetType | null = 'base';
 
   // storage for measure variables
   coords = {
@@ -215,33 +267,34 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   bigGridSnap: gridsnap[] = [];
 
   cache: Cache = {
-    bar: {style: {left: '', width: ''}, html: '', isVisible: false},
-    from: {style: {left: '', width: ''}, html: '', isVisible: true},
-    to: {style: {left: '', width: ''}, html: '', isVisible: true},
-    s_from: {style: {left: '', width: ''}, html: '', isVisible: false},
-    s_to: {style: {left: '', width: ''}, html: '', isVisible: false},
-    min: {style: {left: '', width: ''}, html: '', isVisible: true},
-    max: {style: {left: '', width: ''}, html: '', isVisible: true},
-    single: {style: {left: '', width: ''}, html: '', isVisible: true},
-    grid: {style: {left: '', width: ''}, html: '', isVisible: false},
-    s_single: {style: {left: '', width: ''}, html: '', isVisible: false},
-    shad_single: {style: {left: '', width: ''}, html: '', isVisible: false},
-    shad_from: {style: {left: '', width: ''}, html: '', isVisible: false},
-    shad_to: {style: {left: '', width: ''}, html: '', isVisible: false},
+    bar: { style: { left: '', width: '' }, html: '', isVisible: false },
+    from: { style: { left: '', width: '' }, html: '', isVisible: true },
+    to: { style: { left: '', width: '' }, html: '', isVisible: true },
+    s_from: { style: { left: '', width: '' }, html: '', isVisible: false },
+    s_to: { style: { left: '', width: '' }, html: '', isVisible: false },
+    min: { style: { left: '', width: '' }, html: '', isVisible: true },
+    max: { style: { left: '', width: '' }, html: '', isVisible: true },
+    single: { style: { left: '', width: '' }, html: '', isVisible: true },
+    grid: { style: { left: '', width: '' }, html: '', isVisible: false },
+    s_single: { style: { left: '', width: '' }, html: '', isVisible: false },
+    shad_single: { style: { left: '', width: '' }, html: '', isVisible: false },
+    shad_from: { style: { left: '', width: '' }, html: '', isVisible: false },
+    shad_to: { style: { left: '', width: '' }, html: '', isVisible: false },
   };
-
 
   cache_grid_labels: HTMLSpanElement[] = [];
 
-  constructor() {
-  }
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges): void {
-
     this.validate();
     this.update();
 
-    if (!changes.min?.firstChange || !changes.max?.firstChange || !changes.step?.firstChange) {
+    if (
+      !changes.min?.firstChange ||
+      !changes.max?.firstChange ||
+      !changes.step?.firstChange
+    ) {
       this.update();
     }
 
@@ -249,28 +302,27 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       this.update();
     }
     if (!changes.grid?.firstChange) {
-
       setTimeout(() => {
-        this.init(false)
-       this.update();
+        this.init(false);
+        this.update();
         this.calculateGrid();
       }, 80);
     }
     if (!changes.values?.firstChange) {
-      this.init(false)
+      this.init(false);
       setTimeout(() => {
-        if (changes.values && changes.values.currentValue.length === 0){
+        if (changes.values && changes.values.currentValue.length === 0) {
           this.p_values = [];
           this.validate();
           this.setMinMax();
           this.update();
           this.calculateGrid();
-          setTimeout(()=>{
-            this.init(true)
+          setTimeout(() => {
+            this.init(true);
             this.update();
-          },80)
-        }else {
-          this.init(false)
+          }, 80);
+        } else {
+          this.init(false);
           this.update();
           this.calculateGrid();
           this.calcLabels();
@@ -279,19 +331,14 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     }
 
     if (!changes.type?.firstChange) {
-
-
       this.init(false);
 
       setTimeout(() => {
-        this.init(true)
-
+        this.init(true);
       }, 80);
-
     }
     this.update();
   }
-
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -305,8 +352,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     }, 400);
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   validate() {
     let v = this.values;
@@ -348,7 +394,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       this.to = this.max;
     }
 
-    if (this.type === 'single') {
+    if (this.type() === 'single') {
       if (this.from < this.min) this.from = this.min;
       if (this.from > this.max) this.from = this.max;
     } else {
@@ -454,7 +500,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   }
 
   init(is_update: boolean = false) {
-
     this.no_diapason = false;
     this.coords.p_step = this.convertToPercent(this.step, true);
 
@@ -493,9 +538,8 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     }
 
     if (this.values.length) {
-
-      this.cache.min.html = (this.decorate(this.p_values[this.min], undefined));
-      this.cache.max.html = this.decorate(this.p_values[this.max], undefined)//   this.$cache.max.html(this.decorate(this.options.p_values[this.options.max]));
+      this.cache.min.html = this.decorate(this.p_values[this.min], undefined);
+      this.cache.max.html = this.decorate(this.p_values[this.max], undefined); //   this.$cache.max.html(this.decorate(this.options.p_values[this.options.max]));
     } else {
       let min_pretty = this._prettify(this.min);
       let max_pretty = this._prettify(this.max);
@@ -512,36 +556,13 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   }
 
   /**
-   * Mousemove or touchmove
-   * only for handlers
-   *
-   * @param e {Object} event object
-   */
-  pointerMove(
-    e: MouseEvent
-    //  | TouchEvent
-  ) {
-    if (!this.dragging) {
-      return;
-    }
-
-    let x = e.pageX; // || e.originalEvent.touches && e.originalEvent.touches[0].pageX;
-    this.coords.x_pointer = x - this.coords.x_gap;
-    // console.log('pointerMove', this.coords.x_pointer);
-    this.calc();
-
-    this.drawHandles();
-  }
-
-  /**
    * Mousedown or touchstart
    * for other slider elements, like diapason line
    *
    * @param target {String}
    * @param e {Object} event object
    */
-  pointerClick(target: string, event: MouseEvent): void {
-
+  pointerClick(target: TargetType, event: MouseEvent): void {
     const x = event.pageX; // || e.originalEvent.touches && e.originalEvent.touches[0].pageX;
     if (event.button === 2) {
       return;
@@ -550,7 +571,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     this.target = target;
 
     this.is_click = true;
-    this.coords.x_gap = this.officeLeft(this.cache_rs());// this.$cache.rs.offset().left;
+    this.coords.x_gap = this.officeLeft(this.cache_rs()); // this.$cache.rs.offset().left;
     this.coords.x_pointer = +(x - this.coords.x_gap).toFixed();
 
     this.force_redraw = true;
@@ -559,8 +580,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     // this.$cache.line.trigger("focus");
   }
 
-
-  pointerDown(target: string, event: MouseEvent) {
+  pointerDown(target: TargetType, event: MouseEvent): void {
     let x = event.pageX; //||  event.originalEvent.touches && event.originalEvent.touches[0].pageX;
     if (event.button === 2) {
       return;
@@ -586,40 +606,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     this.calcPointerPercent();
     this.changeLevel(target);
 
-
     this.updateScene();
-  }
-
-  /**
-   * Mouseup or touchend
-   * only for handlers
-   *
-   * @param e {Object} event object
-   */
-  pointerUp(e: any) {
-    if (this.is_active) {
-      this.is_active = false;
-    } else {
-      return;
-    }
-    //
-    // this.$cache.cont.find(".state_hover").removeClass("state_hover");
-    //
-    this.force_redraw = true;
-    //
-    // if (is_old_ie) {
-    //   $("*").prop("unselectable", false);
-    // }
-    //
-    this.updateScene();
-    this.restoreOriginalMinInterval();
-    //
-    // callbacks call
-    if (this.dragging){//if ($.contains(this.$cache.cont[0], e.target) || this.dragging) {
-      this.callOnFinish();
-    }
-    //
-    this.dragging = false;
   }
 
   /**
@@ -899,7 +886,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
         break;
     }
 
-    if (this.type === 'single') {
+    if (this.type() === 'single') {
       this.coords.p_bar_x = this.coords.p_handle / 2;
       this.coords.p_bar_w = this.coords.p_single_fake;
 
@@ -955,8 +942,8 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       return;
     }
 
-    if (this.type === 'single') {
-      this.labels.w_single = this.outerWidth(this.cache_single);
+    if (this.type() === 'single') {
+      this.labels.w_single = this.outerWidth(this.cache_single());
       this.labels.p_single_fake =
         (this.labels.w_single / this.coords.w_rs) * 100;
       this.labels.p_single_left =
@@ -994,7 +981,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
         this.labels.p_to_fake
       );
 
-      this.labels.w_single = this.outerWidth(this.cache_single); //   this.labels.w_single = this.$cache.single.outerWidth(false);
+      this.labels.w_single = this.outerWidth(this.cache_single()); //   this.labels.w_single = this.$cache.single.outerWidth(false);
 
       this.labels.p_single_fake =
         (this.labels.w_single / this.coords.w_rs) * 100;
@@ -1002,7 +989,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
         (this.labels.p_from_left +
           this.labels.p_to_left +
           this.labels.p_to_fake) /
-        2 -
+          2 -
         this.labels.p_single_fake / 2;
       this.labels.p_single_left = this.toFixed(this.labels.p_single_left);
       this.labels.p_single_left = this.checkEdges(
@@ -1055,10 +1042,10 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   }
 
   calcHandlePercent() {
-    if (this.type === 'single') {
-      this.coords.w_handle = this.outerWidth(this.cache_s_single);
+    if (this.type() === 'single') {
+      this.coords.w_handle = this.outerWidth(this.cache_s_single());
     } else {
-      this.coords.w_handle = this.outerWidth(this.cache_s_from);
+      this.coords.w_handle = this.outerWidth(this.cache_s_from());
     }
 
     this.coords.p_handle = this.toFixed(
@@ -1127,8 +1114,8 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       this.cache.to.style.visibility = 'hidden';
       return;
     }
-    //
-    if (this.type === 'single') {
+    // Check if the type is 'single'
+    if (this.type() === 'single') {
       this.cache.single.isVisible = true;
       this.cache.single.style.visibility = 'visible';
       this.cache.from.isVisible = true;
@@ -1137,7 +1124,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       this.cache.to.style.visibility = 'hidden';
       if (values_num) {
         text_single = this.decorate(p_values[this.result.from ?? 0], undefined);
-        this.cache.single.html = text_single;//     this.$cache.single.html(text_single);
+        this.cache.single.html = text_single; //     this.$cache.single.html(text_single);
       } else {
         from_pretty = this._prettify(this.result.from);
 
@@ -1166,11 +1153,22 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       this.cache.to.isVisible = true;
       if (values_num) {
         if (this.decorate_both) {
-          text_single = this.decorate(p_values[this.result.from ?? 0], undefined);
+          text_single = this.decorate(
+            p_values[this.result.from ?? 0],
+            undefined
+          );
           text_single += this.values_separator;
-          text_single += this.decorate(p_values[this.result.to ?? 0], undefined);
+          text_single += this.decorate(
+            p_values[this.result.to ?? 0],
+            undefined
+          );
         } else {
-          text_single = this.decorate(p_values[this.result.from ?? 0] + this.values_separator + p_values[this.result.to ?? 0], undefined);
+          text_single = this.decorate(
+            p_values[this.result.from ?? 0] +
+              this.values_separator +
+              p_values[this.result.to ?? 0],
+            undefined
+          );
         }
         text_from = this.decorate(p_values[this.result.from ?? 0], undefined);
         text_to = this.decorate(p_values[this.result.to ?? 0], undefined);
@@ -1204,7 +1202,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
 
       this.calcLabels();
 
-
       const min = Math.min(this.labels.p_single_left, this.labels.p_from_left);
       let single_left = this.labels.p_single_left + this.labels.p_single_fake;
       let to_left = this.labels.p_to_left + this.labels.p_to_fake;
@@ -1217,10 +1214,9 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
         this.cache.from.isVisible = true;
         this.cache.from.style.visibility = 'hidden'; //.isVisible = false; //     this.$cache.from[0].style.visibility = "hidden";
         this.cache.to.isVisible = true;
-        this.cache.to.style.visibility = 'hidden';// = false; //     this.$cache.to[0].style.visibility = "hidden";
+        this.cache.to.style.visibility = 'hidden'; // = false; //     this.$cache.to[0].style.visibility = "hidden";
         this.cache.single.isVisible = true;
-        this.cache.single.style.visibility = 'visible';//     this.$cache.single[0].style.visibility = "visible";
-
+        this.cache.single.style.visibility = 'visible'; //     this.$cache.single[0].style.visibility = "visible";
 
         if (this.result.from === this.result.to) {
           if (this.target === 'from') {
@@ -1234,18 +1230,18 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
             this.cache.from.style.visibility = 'visible'; //this.$cache.from[0].style.visibility = "visible";
           }
           this.cache.single.isVisible = true;
-          this.cache.single.style.visibility = 'hidden';//this.$cache.single[0].style.visibility = "hidden";
+          this.cache.single.style.visibility = 'hidden'; //this.$cache.single[0].style.visibility = "hidden";
           max = to_left;
         } else {
           this.cache.from.style.visibility = 'hidden'; //this.cache.from.isVisible = false; //       this.$cache.from[0].style.visibility = "hidden";
-          this.cache.to.style.visibility = 'hidden';//this.cache.to.isVisible = false; //       this.$cache.to[0].style.visibility = "hidden";
+          this.cache.to.style.visibility = 'hidden'; //this.cache.to.isVisible = false; //       this.$cache.to[0].style.visibility = "hidden";
           this.cache.single.style.visibility = 'visible'; //this.cache.single.isVisible = true; //       this.$cache.single[0].style.visibility = "visible";
           max = Math.max(single_left, to_left);
         }
       } else {
-        this.cache.from.style.visibility = 'visible';//this.cache.from.isVisible = true; //     this.$cache.from[0].style.visibility = "visible";
-        this.cache.to.style.visibility = 'visible';//this.cache.to.isVisible = true; //     this.$cache.to[0].style.visibility = "visible";
-        this.cache.single.style.visibility = 'hidden';//this.cache.single.isVisible = false; //     this.$cache.single[0].style.visibility = "hidden";
+        this.cache.from.style.visibility = 'visible'; //this.cache.from.isVisible = true; //     this.$cache.from[0].style.visibility = "visible";
+        this.cache.to.style.visibility = 'visible'; //this.cache.to.isVisible = true; //     this.$cache.to[0].style.visibility = "visible";
+        this.cache.single.style.visibility = 'hidden'; //this.cache.single.isVisible = false; //     this.$cache.single[0].style.visibility = "hidden";
       }
 
       if (min < this.labels.p_min + 1) {
@@ -1266,7 +1262,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
    * Draw handles
    */
   drawHandles() {
-
     this.coords.w_rs = this.outerWidth(this.cache_rs()); //this.$cache.rs.outerWidth(false);
 
     if (!this.coords.w_rs) {
@@ -1282,13 +1277,9 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       this.setMinMax();
       this.calc(true);
       this.drawLabels();
-      if (this.grid) {
-
-
+      if (this.grid()) {
         this.calcGridMargin();
         this.calcGridLabels();
-
-
       }
       this.force_redraw = true;
       this.coords.w_rs_old = this.coords.w_rs;
@@ -1310,13 +1301,12 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       this.force_redraw ||
       this.is_key
     ) {
-
       this.drawLabels();
       //
       this.cache.bar.style.left = this.coords.p_bar_x + '%';
       this.cache.bar.style.width = this.coords.p_bar_w + '%';
       //
-      if (this.type === 'single') {
+      if (this.type() === 'single') {
         this.cache.bar.style.left = '0';
         this.cache.bar.style.width =
           this.coords.p_bar_w + this.coords.p_bar_x + '%';
@@ -1381,48 +1371,47 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
    * Write values to input element
    */
   writeToInput() {
-
-    if (this.type === 'single') {
-
+    if (this.type() === 'single') {
       if (this.values.length) {
-        this.change.emit(this.result.from_value ?? 0);//this.$cache.input.prop("value", this.result.from_value);
+        this.change.emit(this.result.from_value ?? 0); //this.$cache.input.prop("value", this.result.from_value);
       } else {
-        this.change.emit(this.result.from ?? 0);//this.$cache.input.prop("value", this.result.from);
+        this.change.emit(this.result.from ?? 0); //this.$cache.input.prop("value", this.result.from);
       }
       //this.$cache.input.data("from", this.result.from);
     } else {
-
       if (this.values.length) {
-        this.change.emit({min: this.result.from_value ?? 0, max: this.result.to_value ?? 0});//this.$cache.input.prop("value", this.result.from_value + this.options.input_values_separator + this.result.to_value);
-
+        this.change.emit({
+          min: this.result.from_value ?? 0,
+          max: this.result.to_value ?? 0,
+        }); //this.$cache.input.prop("value", this.result.from_value + this.options.input_values_separator + this.result.to_value);
       } else {
-        this.change.emit({min: this.result.from ?? 0, max: this.result.to ?? 0});//this.$cache.input.prop("value", this.result.from + this.options.input_values_separator + this.result.to);
+        this.change.emit({
+          min: this.result.from ?? 0,
+          max: this.result.to ?? 0,
+        }); //this.$cache.input.prop("value", this.result.from + this.options.input_values_separator + this.result.to);
       }
       // this.$cache.input.data("from", this.result.from);
       // this.$cache.input.data("to", this.result.to);
     }
-
-
   }
 
-
   update(): void {
-//   if (!this.input) {
-//   return;
-// }
+    //   if (!this.input) {
+    //   return;
+    // }
 
     this.is_update = true;
 
-// this.options.from = this.result.from;
-// this.options.to = this.result.to;
-// this.update_check.from = this.result.from;
-// this.update_check.to = this.result.to;
-//
-// this.options = $.extend(this.options, options);
+    // this.options.from = this.result.from;
+    // this.options.to = this.result.to;
+    // this.update_check.from = this.result.from;
+    // this.update_check.to = this.result.to;
+    //
+    // this.options = $.extend(this.options, options);
     this.validate();
     this.updateResult();
 
-// this.toggleInput();
+    // this.toggleInput();
     this.remove();
     this.init(true);
   }
@@ -1469,7 +1458,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   updateFrom(): void {
     //this.result.from = this.from;
 
-
     if (this.result.from) {
       this.result.from_percent = this.convertToPercent(this.result.from);
       this.result.from_pretty = this._prettify(this.result.from);
@@ -1477,9 +1465,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
         this.result.from_value = this.values[this.result.from];
       }
     }
-
-
-
 
     this.result.from_percent = this.convertToPercent(this.result.from);
     this.result.from_pretty = this._prettify(this.result.from);
@@ -1491,7 +1476,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   updateTo(): void {
     //this.result.to = this.to;
 
-
     if (this.result.to) {
       this.result.to_percent = this.convertToPercent(this.result.to);
       this.result.to_pretty = this._prettify(this.result.to);
@@ -1500,8 +1484,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       }
     }
 
-
-
     this.result.to_percent = this.convertToPercent(this.result.to);
     this.result.to_pretty = this._prettify(this.result.to);
     if (this.values) {
@@ -1509,84 +1491,78 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     }
   }
 
-
-// =============================================================================================================
+  // =============================================================================================================
   // Callbacks
-//
+  //
   callOnStart() {
-//   this.writeToInput();
-//
-//   if (this.options.onStart && typeof this.options.onStart === "function") {
-//   if (this.options.scope) {
-//   this.options.onStart.call(this.options.scope, this.result);
-// } else {
-//   this.options.onStart(this.result);
-// }
-// }
+    //   this.writeToInput();
+    //
+    //   if (this.options.onStart && typeof this.options.onStart === "function") {
+    //   if (this.options.scope) {
+    //   this.options.onStart.call(this.options.scope, this.result);
+    // } else {
+    //   this.options.onStart(this.result);
+    // }
+    // }
   }
 
   callOnChange() {
     // this.writeToInput();
-
-
-//
-//   if (this.options.onChange && typeof this.options.onChange === "function") {
-//     if (this.options.scope) {
-//       this.options.onChange.call(this.options.scope, this.result);
-//     } else {
-//       this.options.onChange(this.result);
-//     }
-//   }
+    //
+    //   if (this.options.onChange && typeof this.options.onChange === "function") {
+    //     if (this.options.scope) {
+    //       this.options.onChange.call(this.options.scope, this.result);
+    //     } else {
+    //       this.options.onChange(this.result);
+    //     }
+    //   }
   }
 
   callOnFinish() {
     // this.writeToInput();
-//
-//   if (this.options.onFinish && typeof this.options.onFinish === "function") {
-//     if (this.options.scope) {
-//       this.options.onFinish.call(this.options.scope, this.result);
-//     } else {
-//       this.options.onFinish(this.result);
-//     }
-//   }
-
-
-
+    //
+    //   if (this.options.onFinish && typeof this.options.onFinish === "function") {
+    //     if (this.options.scope) {
+    //       this.options.onFinish.call(this.options.scope, this.result);
+    //     } else {
+    //       this.options.onFinish(this.result);
+    //     }
+    //   }
 
     this.writeToInput();
 
-    if (this.type === 'single') {
-
+    if (this.type() === 'single') {
       if (this.values.length) {
-        this.changeFinish.emit(this.result.from_value ?? 0);//this.$cache.input.prop("value", this.result.from_value);
+        this.changeFinish.emit(this.result.from_value ?? 0); //this.$cache.input.prop("value", this.result.from_value);
       } else {
-        this.changeFinish.emit(this.result.from ?? 0);//this.$cache.input.prop("value", this.result.from);
+        this.changeFinish.emit(this.result.from ?? 0); //this.$cache.input.prop("value", this.result.from);
       }
       //this.$cache.input.data("from", this.result.from);
     } else {
-
       if (this.values.length) {
-        this.changeFinish.emit({min: this.result.from_value ?? 0, max: this.result.to_value ?? 0});//this.$cache.input.prop("value", this.result.from_value + this.options.input_values_separator + this.result.to_value);
-
+        this.changeFinish.emit({
+          min: this.result.from_value ?? 0,
+          max: this.result.to_value ?? 0,
+        }); //this.$cache.input.prop("value", this.result.from_value + this.options.input_values_separator + this.result.to_value);
       } else {
-        this.changeFinish.emit({min: this.result.from ?? 0, max: this.result.to ?? 0});//this.$cache.input.prop("value", this.result.from + this.options.input_values_separator + this.result.to);
+        this.changeFinish.emit({
+          min: this.result.from ?? 0,
+          max: this.result.to ?? 0,
+        }); //this.$cache.input.prop("value", this.result.from + this.options.input_values_separator + this.result.to);
       }
     }
-
-
-
   }
 
   callOnUpdate() {
     // this.writeToInput();
-//
-//   if (this.options.onUpdate && typeof this.options.onUpdate === "function") {
-//     if (this.options.scope) {
-//       this.options.onUpdate.call(this.options.scope, this.result);
-//     } else {
-//       this.options.onUpdate(this.result);
-//     }
-//   }
+    //
+    //   if (this.options.onUpdate && typeof this.options.onUpdate === "function") {
+    //     if (this.options.scope) {
+    //       this.options.onUpdate.call(this.options.scope, this.result);
+    //     } else {
+    //       this.options.onUpdate(this.result);
+    //     }
+    //   }
   }
 
   /**
@@ -1594,7 +1570,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
    * to update everything
    */
   updateScene() {
-
     if (this.raf_id) {
       //   cancelAnimationFrame(this.raf_id);
       this.raf_id = null;
@@ -1617,7 +1592,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   }
 
   private _prettify(num: any): any {
-    if (!this.prettify_enabled) {
+    if (!this.prettify_enabled()) {
       return num;
     }
 
@@ -1628,7 +1603,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     // }
   }
 
-  prettify(num: any) {
+  prettify(num: any): string {
     let n = num.toString();
     return n.replace(
       /(\d{1,3}(?=(?:\d\d\d)+(?!\d)))/g,
@@ -1759,7 +1734,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     let to_min;
     let to_max;
     //
-    if (this.type === 'single') {
+    if (this.type() === 'single') {
       if (this.from_shadow && (is_from_min || is_from_max)) {
         from_min = this.convertToPercent(
           // @ts-ignore
@@ -1815,7 +1790,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
         this.cache.shad_from.style.display = 'none';
       }
 
-      if (this.to_shadow && (is_to_min || is_to_max)) {
+      if (this.to_shadow() && (is_to_min || is_to_max)) {
         // @ts-ignore
         to_min = this.convertToPercent(is_to_min ? this.to_min : this.min);
         to_max =
@@ -1847,11 +1822,11 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       return;
     }
 
-    if (this.type === 'single') {
+    if (this.type() === 'single') {
       //if (this.options.type === "single") {
-      this.coords.w_handle = this.outerWidth(this.cache_s_single);
+      this.coords.w_handle = this.outerWidth(this.cache_s_single());
     } else {
-      this.coords.w_handle = this.outerWidth(this.cache_s_from); // this.$cache.s_from.outerWidth(false);
+      this.coords.w_handle = this.outerWidth(this.cache_s_from()); // this.$cache.s_from.outerWidth(false);
     }
     this.coords.p_handle = this.toFixed(
       (this.coords.w_handle / this.coords.w_rs) * 100
@@ -1862,7 +1837,6 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       this.toFixed(100 - this.coords.p_handle) + '%';
     this.cache.grid.style.left = this.coords.grid_gap + '%';
   }
-
 
   /**
    * Determine which handles was clicked last
@@ -1876,24 +1850,24 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
         this.coords.p_gap = this.toFixed(
           this.coords.p_pointer - this.coords.p_single_fake
         );
-        this.cache_s_single?.nativeElement.classList.add('state_hover'); // this.$cache.s_single.addClass("state_hover");
+        this.cache_s_single()?.nativeElement.classList.add('state_hover'); // this.$cache.s_single.addClass("state_hover");
 
         break;
       case 'from':
         this.coords.p_gap = this.toFixed(
           this.coords.p_pointer - this.coords.p_from_fake
         );
-        this.cache_s_from?.nativeElement.classList.add('state_hover'); // this.$cache.s_from.addClass("state_hover");
-        this.cache_s_from?.nativeElement.classList.add('type_last');// this.$cache.s_from.addClass("type_last");
-        this.cache_s_to?.nativeElement.classList.remove('type_last');// this.$cache.s_to.removeClass("type_last");
+        this.cache_s_from()?.nativeElement.classList.add('state_hover'); // this.$cache.s_from.addClass("state_hover");
+        this.cache_s_from()?.nativeElement.classList.add('type_last'); // this.$cache.s_from.addClass("type_last");
+        this.cache_s_to()?.nativeElement.classList.remove('type_last'); // this.$cache.s_to.removeClass("type_last");
         break;
       case 'to':
         this.coords.p_gap = this.toFixed(
           this.coords.p_pointer - this.coords.p_to_fake
         );
-        this.cache_s_to?.nativeElement.classList.add('state_hover');// this.$cache.s_to.addClass("state_hover");
-        this.cache_s_to?.nativeElement.classList.add('type_last');// this.$cache.s_to.addClass("type_last");
-        this.cache_s_from?.nativeElement.classList.remove('type_last');// this.$cache.s_from.removeClass("type_last");
+        this.cache_s_to()?.nativeElement.classList.add('state_hover'); // this.$cache.s_to.addClass("state_hover");
+        this.cache_s_to()?.nativeElement.classList.add('type_last'); // this.$cache.s_to.addClass("type_last");
+        this.cache_s_from()?.nativeElement.classList.remove('type_last'); // this.$cache.s_from.removeClass("type_last");
         break;
       case 'both':
         this.coords.p_gap_left = this.toFixed(
@@ -1902,8 +1876,8 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
         this.coords.p_gap_right = this.toFixed(
           this.coords.p_to_fake - this.coords.p_pointer
         );
-        this.cache_s_to?.nativeElement.classList.remove('type_last');// this.$cache.s_to.removeClass("type_last");
-        this.cache_s_from?.nativeElement.classList.remove('type_last');// this.$cache.s_from.removeClass("type_last");
+        this.cache_s_to()?.nativeElement.classList.remove('type_last'); // this.$cache.s_to.removeClass("type_last");
+        this.cache_s_from()?.nativeElement.classList.remove('type_last'); // this.$cache.s_from.removeClass("type_last");
         break;
     }
   }
@@ -1912,9 +1886,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   // Grid
 
   calculateGrid() {
-    if (!this.grid) {
-
-
+    if (!this.grid()) {
       return;
     }
     this.bigGridSnap = [];
@@ -1976,10 +1948,10 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
         }
 
         small_w = this.toFixed(big_w - small_p * z);
-        this.smallGridSnap.push({left: small_w + '%', label: ''});
+        this.smallGridSnap.push({ left: small_w + '%', label: '' });
       }
 
-      const bigSnap: gridsnap = {left: big_w + '%', label: ''};
+      const bigSnap: gridsnap = { left: big_w + '%', label: '' };
 
       result = this.convertToValue(big_w);
       if (this.values.length) {
@@ -2001,9 +1973,11 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     const num = this.coords.big_num;
 
     for (let i = 0; i < num; i++) {
-      const label = this.cache_grid?.nativeElement.querySelector<HTMLSpanElement>('.js-grid-text-' + i);
-      if (label)
-        this.cache_grid_labels.push(label);
+      const label =
+        this.cache_grid()?.nativeElement.querySelector<HTMLSpanElement>(
+          '.js-grid-text-' + i
+        );
+      if (label) this.cache_grid_labels.push(label);
       //     $label = this.$cache.grid.find(".js-grid-text-" + i);
       //     this.$cache.grid_labels.push($label);
     }
@@ -2021,8 +1995,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     //
     for (i = 0; i < num; i++) {
       const ow = this.outerWidth(this.cache_grid_labels[i]); //this.coords.big_w[i] = this.$cache.grid_labels[i].outerWidth(false);
-      if (ow > 0)
-        this.coords.big_w[i] = ow;
+      if (ow > 0) this.coords.big_w[i] = ow;
 
       this.coords.big_p[i] = this.toFixed(
         (this.coords.big_w[i] / this.coords.w_rs) * 100
@@ -2043,9 +2016,13 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       //
       if (finish[num - 1] > 100 + this.coords.grid_gap) {
         finish[num - 1] = 100 + this.coords.grid_gap;
-        start[num - 1] = this.toFixed(finish[num - 1] - this.coords.big_p[num - 1]);
+        start[num - 1] = this.toFixed(
+          finish[num - 1] - this.coords.big_p[num - 1]
+        );
         //
-        this.coords.big_x[num - 1] = this.toFixed(this.coords.big_p[num - 1] - this.coords.grid_gap);
+        this.coords.big_x[num - 1] = this.toFixed(
+          this.coords.big_p[num - 1] - this.coords.grid_gap
+        );
       }
     }
 
@@ -2056,20 +2033,19 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       // const   label = this.cache_grid_labels[i];
 
       if (this.coords.big_x[i] !== Number.POSITIVE_INFINITY) {
-        this.bigGridSnap[i].marginLeft = -this.coords.big_x[i] + "%";  //     label.style.marginLeft = -this.coords.big_x[i] + "%";
+        this.bigGridSnap[i].marginLeft = -this.coords.big_x[i] + '%'; //     label.style.marginLeft = -this.coords.big_x[i] + "%";
       }
     }
   }
 
-// Collisions Calc Beta
+  // Collisions Calc Beta
   // TODO: Refactor then have plenty of time
   calcGridCollision(step: number, start: number[], finish: number[]) {
     // var i, next_i, label,
     const num = this.coords.big_num;
 
-
     for (let i = 0; i < num; i += step) {
-      let next_i = i + (step / 2);
+      let next_i = i + step / 2;
       if (next_i >= num) {
         break;
       }
@@ -2077,9 +2053,9 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       // let label = this.cache_grid_labels[next_i];//     label = this.$cache.grid_labels[next_i][0];
 
       if (finish[i] <= start[next_i]) {
-        this.bigGridSnap[next_i].visibility = 'visible';//label.style.visibility = "visible";
+        this.bigGridSnap[next_i].visibility = 'visible'; //label.style.visibility = "visible";
       } else {
-        this.bigGridSnap[next_i].visibility = 'hidden';//label.style.visibility = "hidden";
+        this.bigGridSnap[next_i].visibility = 'hidden'; //label.style.visibility = "hidden";
       }
     }
   }
@@ -2115,9 +2091,9 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     return decorated;
   }
 
-  checkMinInterval(p_current: any, p_next: any, type: any) {
-    let current;
-    let next;
+  checkMinInterval(p_current: number, p_next: number, type: 'from' | 'to') {
+    let current: number;
+    let next: number;
 
     if (!this.min_interval) {
       return p_current;
@@ -2139,9 +2115,9 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     return this.convertToPercent(current);
   }
 
-  checkMaxInterval(p_current: any, p_next: any, type: any) {
-    let current;
-    let next;
+  checkMaxInterval(p_current: number, p_next: number, type: 'from' | 'to') {
+    let current: number;
+    let next: number;
 
     if (!this.max_interval) {
       return p_current;
@@ -2163,7 +2139,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     return this.convertToPercent(current);
   }
 
-  checkDiapason(p_num: any, min: any, max: any) {
+  checkDiapason(p_num: number, min: any, max: any) {
     let num = this.convertToValue(p_num);
 
     if (typeof min !== 'number') {
@@ -2191,8 +2167,8 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
    * @param real_x {Number}
    * @returns {String}
    */
-  chooseHandle(real_x: any) {
-    if (this.type === 'single') {
+  chooseHandle(real_x: any): 'from' | 'to' | 'single' {
+    if (this.type() === 'single') {
       return 'single';
     } else {
       const m_point =
@@ -2206,7 +2182,9 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     }
   }
 
-  private outerWidth(element: ElementRef<HTMLSpanElement> | HTMLSpanElement | undefined): number {
+  private outerWidth(
+    element: ElementRef<HTMLSpanElement> | HTMLSpanElement | undefined
+  ): number {
     if (element instanceof HTMLSpanElement) {
       return element.offsetWidth;
     } else if (element && element.nativeElement) {
@@ -2274,12 +2252,11 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       p -= p_step;
     }
 
-    this.coords.x_pointer = this.toFixed(this.coords.w_rs / 100 * p);
+    this.coords.x_pointer = this.toFixed((this.coords.w_rs / 100) * p);
     this.is_key = true;
     this.calc();
     this.drawHandles();
   }
-
 
   /**
    * Focus with tabIndex
@@ -2290,20 +2267,15 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     // if (!this.target) {
     //     let x;
     //     let $handle;
-
     //     if (this.type === "single") {
     //         $handle = this.cache_single;
     //     } else {
     //         $handle = this.cache_from;
     //     }
-
     //     x = this.officeLeft($handle);
     //     const width = $handle?.nativeElement.getBoundingClientRect().width;
     //     x += ((width??0) / 2) - 1;
-
-
     //     this.pointerClick("single", <MouseEvent>{preventDefault: function () {}, pageX: x});
     // }
   }
-
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { NgxIonRangeSliderComponent } from "../../../ngx-ion-range-slider/lib/ngx-ion-range-slider.component";
 
@@ -7,7 +7,7 @@ import { NgxIonRangeSliderComponent } from "../../../ngx-ion-range-slider/lib/ng
     selector: 'app-customize',
     templateUrl: './customize.component.html',
     styleUrls: ['./customize.component.scss'],
-    imports: [CommonModule, FormsModule, NgxIonRangeSliderComponent]
+    imports: [FormsModule, NgxIonRangeSliderComponent]
 })
 export class CustomizeComponent implements OnInit {
   min: number = 0;
@@ -36,7 +36,7 @@ export class CustomizeComponent implements OnInit {
   to_fixed: boolean;
   to_min: number | null;
   to_max: number | null;
-  to_shadow: boolean;
+  to_shadow: boolean = false;
   hide_min_max: boolean;
   hide_from_to: boolean;
   force_edges: boolean;
