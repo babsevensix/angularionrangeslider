@@ -21,12 +21,15 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser-esbuild",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/demo-app",
+            "outputPath": {
+              "base": "dist/demo-app"
+            },
             "index": "src/demo-app/index.html",
-            "main": "src/demo-app/main.ts",
-            "polyfills": "src/demo-app/polyfills.ts",
+            "polyfills": [
+              "src/demo-app/polyfills.ts"
+            ],
             "tsConfig": "src/demo-app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -37,7 +40,8 @@
               "src/demo-app/styles.scss"
             ],
 
-            "scripts": []
+            "scripts": [],
+            "browser": "src/demo-app/main.ts"
           },
           "configurations": {
             "production": {
@@ -65,9 +69,7 @@
 
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true,
