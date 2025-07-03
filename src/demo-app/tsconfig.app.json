@@ -11,9 +11,11 @@
     "module": "es2015",
     "baseUrl": "",
     "types": [],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "paths": {
-      "@local/ngx-ion-range-slider": [ "../ngx-ion-range-slider/lib/public-api.ts" ]
+      "@local/ngx-ion-range-slider": [
+        "../ngx-ion-range-slider/lib/public-api.ts"
+      ]
     }
   },
   "files": [
