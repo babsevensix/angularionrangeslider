@@ -7,7 +7,8 @@ import {
   OnChanges,
   OnInit, Output,
   SimpleChanges,
-  ViewChild
+  ViewChild,
+  viewChild
 } from '@angular/core';
 import { Cache } from './Cache';
 import { gridsnap } from './gridsnap';
@@ -24,7 +25,8 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
   //
   // @ViewChild('.irs-single', {static: false})
   // irsSingle: HTMLSpanElement | undefined;
-  @ViewChild('cache_rs') cache_rs: ElementRef<HTMLSpanElement> | undefined; //$cache.rs
+  //@ViewChild('cache_rs') cache_rs: ElementRef<HTMLSpanElement> | undefined; //$cache.rs
+  cache_rs = viewChild<ElementRef<HTMLSpanElement> | undefined>('cache_rs');
   @ViewChild('cache_single') cache_single: ElementRef<HTMLSpanElement> | undefined; //$cache.single
   @ViewChild('cache_s_single') cache_s_single: ElementRef<HTMLSpanElement> | undefined; //$cache.single
   // @ViewChild('cache_bar') cache_bar: ElementRef<HTMLSpanElement> | undefined; //$cache.bar
@@ -549,7 +551,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     this.target = target;
 
     this.is_click = true;
-    this.coords.x_gap = this.officeLeft(this.cache_rs);// this.$cache.rs.offset().left;
+    this.coords.x_gap = this.officeLeft(this.cache_rs());// this.$cache.rs.offset().left;
     this.coords.x_pointer = +(x - this.coords.x_gap).toFixed();
 
     this.force_redraw = true;
@@ -578,7 +580,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
     this.is_active = true;
     this.dragging = true;
 
-    this.coords.x_gap = this.officeLeft(this.cache_rs); //this.coords.x_gap = this.$cache.rs.offset().left;
+    this.coords.x_gap = this.officeLeft(this.cache_rs()); //this.coords.x_gap = this.$cache.rs.offset().left;
 
     this.coords.x_pointer = x - this.coords.x_gap;
 
@@ -655,7 +657,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
 
     if (this.calc_count === 10 || update) {
       this.calc_count = 0;
-      this.coords.w_rs = this.outerWidth(this.cache_rs);
+      this.coords.w_rs = this.outerWidth(this.cache_rs());
       this.calcHandlePercent();
     }
 
@@ -1266,7 +1268,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
    */
   drawHandles() {
 
-    this.coords.w_rs = this.outerWidth(this.cache_rs); //this.$cache.rs.outerWidth(false);
+    this.coords.w_rs = this.outerWidth(this.cache_rs()); //this.$cache.rs.outerWidth(false);
 
     if (!this.coords.w_rs) {
       return;
@@ -1841,7 +1843,7 @@ export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChan
       return;
     }
 
-    this.coords.w_rs = this.outerWidth(this.cache_rs);
+    this.coords.w_rs = this.outerWidth(this.cache_rs());
     if (!this.coords.w_rs) {
       return;
     }

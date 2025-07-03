@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
+import { CustomizeComponent } from "./customize/customize.component";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  standalone: true,
+  imports: [CustomizeComponent]
 })
 export class AppComponent {
   title = 'ionrangesliderangular';
