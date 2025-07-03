@@ -4,11 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { NgxIonRangeSliderComponent } from "../../../ngx-ion-range-slider/lib/ngx-ion-range-slider.component";
 
 @Component({
-  selector: 'app-customize',
-  templateUrl: './customize.component.html',
-  styleUrls: ['./customize.component.scss'],
-  standalone: true,
-  imports: [CommonModule, FormsModule, NgxIonRangeSliderComponent]
+    selector: 'app-customize',
+    templateUrl: './customize.component.html',
+    styleUrls: ['./customize.component.scss'],
+    imports: [CommonModule, FormsModule, NgxIonRangeSliderComponent]
 })
 export class CustomizeComponent implements OnInit {
   min: number = 0;

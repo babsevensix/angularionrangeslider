@@ -14,11 +14,10 @@ import { Cache } from './Cache';
 import { gridsnap } from './gridsnap';
 
 @Component({
-  selector: 'ngx-ion-range-slider',
-  templateUrl: './ngx-ion-range-slider.component.html',
-  styleUrls: ['./ngx-ion-range-slider.component.scss'],
-  standalone: true,
-  imports: [ CommonModule, JsonPipe ]
+    selector: 'ngx-ion-range-slider',
+    templateUrl: './ngx-ion-range-slider.component.html',
+    styleUrls: ['./ngx-ion-range-slider.component.scss'],
+    imports: [CommonModule, JsonPipe]
 })
 export class NgxIonRangeSliderComponent implements OnInit, AfterViewInit, OnChanges {
   // @ViewChild('ionRangeSlider', {static: true}) ionRangeSlider!: ElementRef;
